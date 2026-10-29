@@ -50,7 +50,7 @@ export function createApp({ db, logger, fx }: AppDeps): Express {
     }
   });
 
-  const wallets = new WalletService(db);
+  const wallets = new WalletService(db, fx);
   app.use('/v1', walletRoutes(wallets));
   app.use('/v1', fxRoutes(fx));
 

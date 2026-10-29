@@ -28,5 +28,10 @@ export function walletRoutes(wallets: WalletService): Router {
     res.json({ data: await wallets.get(walletId) });
   });
 
+  router.get('/wallets/:walletId/balances', async (req, res) => {
+    const { walletId } = validate(walletIdParams, req.params);
+    res.json({ data: await wallets.getBalances(walletId) });
+  });
+
   return router;
 }

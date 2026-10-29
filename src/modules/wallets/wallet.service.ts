@@ -1,12 +1,23 @@
+import { Decimal } from 'decimal.js';
 import type { DB } from '../../db/client.js';
 import { isUniqueViolation } from '../../db/errors.js';
-import { CURRENCY_CODES, type CurrencyCode } from '../../domain/currencies.js';
+import { CURRENCIES, CURRENCY_CODES, type CurrencyCode } from '../../domain/currencies.js';
 import { normalizeEmail, normalizePhone } from '../../domain/identifiers.js';
+import { Money } from '../../domain/money.js';
 import { conflict, notFound } from '../../lib/errors.js';
+import { quoteFrom, type FxService, type RateSource } from '../fx/fx.service.js';
 
 export interface Balance {
   currency: CurrencyCode;
   amount: string;
+}
+
+export interface WalletBalances {
+  walletId: string;
+  balances: (Balance & { usdValue: string })[];
+  /** Sum of the usdValue lines, in USDx at USDx precision. */
+  totalUsd: string;
+  fx: { source: RateSource; provider: string; refreshedAt: Date };
 }
 
 export interface WalletView {
@@ -23,7 +34,10 @@ export interface CreateWalletInput {
 }
 
 export class WalletService {
-  constructor(private readonly db: DB) {}
+  constructor(
+    private readonly db: DB,
+    private readonly fx: FxService,
+  ) {}
 
   /** Creates the wallet and one zero-balance account per currency in one transaction. */
   async create(input: CreateWalletInput): Promise<WalletView> {
@@ -67,22 +81,67 @@ export class WalletService {
       .executeTakeFirst();
     if (!wallet) throw notFound('WALLET_NOT_FOUND', 'Wallet not found');
 
+    return {
+      id: wallet.id,
+      email: wallet.email,
+      phone: wallet.phone,
+      balances: await this.loadBalances(walletId),
+      createdAt: wallet.created_at,
+    };
+  }
+
+  /**
+   * Current balances, each valued in USDx, plus the total. Balances are read straight
+   * from the database (never cached), and every line uses the same rate snapshot.
+   * Each line is rounded half-even to USDx precision and the total is the sum of
+   * the lines, so the numbers a client sees always add up.
+   */
+  async getBalances(walletId: string): Promise<WalletBalances> {
+    const exists = await this.db
+      .selectFrom('wallets')
+      .select('id')
+      .where('id', '=', walletId)
+      .executeTakeFirst();
+    if (!exists) throw notFound('WALLET_NOT_FOUND', 'Wallet not found');
+
+    const [balances, snapshot] = await Promise.all([
+      this.loadBalances(walletId),
+      this.fx.getSnapshot(),
+    ]);
+    const usdDecimals = CURRENCIES.USDx.decimals;
+
+    let total = new Money(0);
+    const lines = balances.map((balance) => {
+      const { rate } = quoteFrom(snapshot, balance.currency, 'USDx');
+      const usdValue = new Money(balance.amount)
+        .times(rate)
+        .toDecimalPlaces(usdDecimals, Decimal.ROUND_HALF_EVEN);
+      total = total.plus(usdValue);
+      return { ...balance, usdValue: usdValue.toFixed(usdDecimals) };
+    });
+
+    return {
+      walletId,
+      balances: lines,
+      totalUsd: total.toFixed(usdDecimals),
+      fx: {
+        source: snapshot.source,
+        provider: snapshot.provider,
+        refreshedAt: snapshot.refreshedAt,
+      },
+    };
+  }
+
+  private async loadBalances(walletId: string): Promise<Balance[]> {
     const accounts = await this.db
       .selectFrom('accounts')
       .select(['currency', 'balance'])
       .where('wallet_id', '=', walletId)
       .execute();
     const byCurrency = new Map(accounts.map((a) => [a.currency, a.balance]));
-
-    return {
-      id: wallet.id,
-      email: wallet.email,
-      phone: wallet.phone,
-      balances: CURRENCY_CODES.map((currency) => ({
-        currency,
-        amount: byCurrency.get(currency) ?? '0.000000',
-      })),
-      createdAt: wallet.created_at,
-    };
+    return CURRENCY_CODES.map((currency) => ({
+      currency,
+      amount: byCurrency.get(currency) ?? '0.000000',
+    }));
   }
 }

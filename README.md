@@ -100,7 +100,7 @@ retrying a failed provider, and concurrent requests share one provider call.
 - [x] Create and fetch wallets (unique email or phone)
 - [x] FX rate service with live provider and fallback
 - [x] Current FX rates endpoint
-- [ ] Wallet balances with total in USD
+- [x] Wallet balances with total in USD
 - [ ] Deposits
 - [ ] Swaps
 - [ ] Transfers

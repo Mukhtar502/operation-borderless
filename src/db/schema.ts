@@ -63,7 +63,7 @@ export interface IdempotencyKeysTable {
   key: string;
   request_hash: string;
   response_status: number;
-  response_body: ColumnType<unknown, string, never>;
+  response_body: ColumnType<unknown, string, string>;
   transaction_id: string | null;
   created_at: CreatedAt;
 }

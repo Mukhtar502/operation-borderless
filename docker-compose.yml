@@ -3,7 +3,7 @@ x-api-env: &api-env
   LOG_LEVEL: info
   DATABASE_URL: postgres://borderless:borderless@db:5432/borderless
   FX_PROVIDER_URL: https://open.er-api.com/v6/latest/USD
-  FX_TIMEOUT_MS: 3000
+  FX_TIMEOUT_MS: 5000
   FX_CACHE_TTL_SECONDS: 300
 
 services:

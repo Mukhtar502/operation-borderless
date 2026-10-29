@@ -78,13 +78,28 @@ To use an existing database instead, set `TEST_DATABASE_URL`.
 | Tests     | Vitest, Supertest, Testcontainers        |
 | Tooling   | Yarn, ESLint, Prettier, Docker Compose   |
 
+## FX rates
+
+`GET /v1/rates` returns the rate for every pair of different currencies
+(5 × 4 = 20), each with the time it was last refreshed. `source` tells you how
+fresh the rates are:
+
+| `source` | Meaning                                                          |
+| -------- | ---------------------------------------------------------------- |
+| `live`   | Fetched from the provider within the last 5 minutes              |
+| `stale`  | Provider is failing; the last good live rates are being reused   |
+| `static` | Provider has not answered since start-up; built-in table is used |
+
+The API keeps working when the FX provider is down. It waits 30 seconds before
+retrying a failed provider, and concurrent requests share one provider call.
+
 ## Progress
 
 - [x] Project setup, Docker Compose and migrations
 - [x] Database schema with a double-entry ledger
 - [x] Create and fetch wallets (unique email or phone)
 - [x] FX rate service with live provider and fallback
-- [ ] Current FX rates endpoint
+- [x] Current FX rates endpoint
 - [ ] Wallet balances with total in USD
 - [ ] Deposits
 - [ ] Swaps

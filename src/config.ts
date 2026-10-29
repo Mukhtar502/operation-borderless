@@ -10,7 +10,7 @@ const schema = z.object({
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   DATABASE_URL: z.url(),
   FX_PROVIDER_URL: z.url().default('https://open.er-api.com/v6/latest/USD'),
-  FX_TIMEOUT_MS: z.coerce.number().int().positive().default(3000),
+  FX_TIMEOUT_MS: z.coerce.number().int().positive().default(5000),
   FX_CACHE_TTL_SECONDS: z.coerce.number().int().positive().default(300),
 });
 

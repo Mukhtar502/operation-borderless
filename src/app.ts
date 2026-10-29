@@ -5,15 +5,18 @@ import { pinoHttp } from 'pino-http';
 import type { DB } from './db/client.js';
 import { errorHandler, notFoundHandler } from './http/error-handler.js';
 import type { Logger } from './lib/logger.js';
+import { fxRoutes } from './modules/fx/fx.routes.js';
+import type { FxService } from './modules/fx/fx.service.js';
 import { walletRoutes } from './modules/wallets/wallet.routes.js';
 import { WalletService } from './modules/wallets/wallet.service.js';
 
 export interface AppDeps {
   db: DB;
   logger: Logger;
+  fx: FxService;
 }
 
-export function createApp({ db, logger }: AppDeps): Express {
+export function createApp({ db, logger, fx }: AppDeps): Express {
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', false);
@@ -49,6 +52,7 @@ export function createApp({ db, logger }: AppDeps): Express {
 
   const wallets = new WalletService(db);
   app.use('/v1', walletRoutes(wallets));
+  app.use('/v1', fxRoutes(fx));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

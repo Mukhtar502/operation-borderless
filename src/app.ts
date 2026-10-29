@@ -5,6 +5,8 @@ import { pinoHttp } from 'pino-http';
 import type { DB } from './db/client.js';
 import { errorHandler, notFoundHandler } from './http/error-handler.js';
 import type { Logger } from './lib/logger.js';
+import { walletRoutes } from './modules/wallets/wallet.routes.js';
+import { WalletService } from './modules/wallets/wallet.service.js';
 
 export interface AppDeps {
   db: DB;
@@ -44,6 +46,9 @@ export function createApp({ db, logger }: AppDeps): Express {
       res.status(503).json({ status: 'unavailable' });
     }
   });
+
+  const wallets = new WalletService(db);
+  app.use('/v1', walletRoutes(wallets));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

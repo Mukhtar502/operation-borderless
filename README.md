@@ -101,7 +101,7 @@ retrying a failed provider, and concurrent requests share one provider call.
 - [x] FX rate service with live provider and fallback
 - [x] Current FX rates endpoint
 - [x] Wallet balances with total in USD
-- [ ] Deposits
+- [x] Deposits
 - [ ] Swaps
 - [ ] Transfers
 - [ ] Transaction history with pagination and filters

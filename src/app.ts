@@ -7,6 +7,10 @@ import { errorHandler, notFoundHandler } from './http/error-handler.js';
 import type { Logger } from './lib/logger.js';
 import { fxRoutes } from './modules/fx/fx.routes.js';
 import type { FxService } from './modules/fx/fx.service.js';
+import { IdempotencyService } from './modules/idempotency/idempotency.service.js';
+import { LedgerService } from './modules/ledger/ledger.service.js';
+import { paymentRoutes } from './modules/payments/payment.routes.js';
+import { PaymentService } from './modules/payments/payment.service.js';
 import { walletRoutes } from './modules/wallets/wallet.routes.js';
 import { WalletService } from './modules/wallets/wallet.service.js';
 
@@ -51,7 +55,9 @@ export function createApp({ db, logger, fx }: AppDeps): Express {
   });
 
   const wallets = new WalletService(db, fx);
+  const payments = new PaymentService(new LedgerService(), new IdempotencyService(db));
   app.use('/v1', walletRoutes(wallets));
+  app.use('/v1', paymentRoutes(payments));
   app.use('/v1', fxRoutes(fx));
 
   app.use(notFoundHandler);

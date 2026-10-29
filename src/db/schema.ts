@@ -37,7 +37,7 @@ export interface TransactionsTable {
   id: Generated<string>;
   type: TransactionType;
   from_wallet_id: string | null;
-  to_wallet_id: string | null;
+  to_wallet_id: string;
   source_currency: CurrencyCode;
   source_amount: Numeric;
   destination_currency: CurrencyCode;

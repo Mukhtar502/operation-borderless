@@ -1,3 +1,11 @@
+x-api-env: &api-env
+  NODE_ENV: production
+  LOG_LEVEL: info
+  DATABASE_URL: postgres://borderless:borderless@db:5432/borderless
+  FX_PROVIDER_URL: https://open.er-api.com/v6/latest/USD
+  FX_TIMEOUT_MS: 3000
+  FX_CACHE_TTL_SECONDS: 300
+
 services:
   db:
     image: postgres:16-alpine
@@ -15,6 +23,28 @@ services:
       interval: 2s
       timeout: 3s
       retries: 20
+
+  # One-shot job: applies migrations, then exits. The API only starts after it succeeds.
+  migrate:
+    build: .
+    image: borderless-api:local
+    command: ['node', 'dist/db/migrate.js']
+    environment: *api-env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build: .
+    image: borderless-api:local
+    environment:
+      <<: *api-env
+      PORT: 3000
+    ports:
+      - '${API_HOST_PORT:-3000}:3000'
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   pgdata:

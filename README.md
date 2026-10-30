@@ -82,7 +82,8 @@ To use an existing database instead, set `TEST_DATABASE_URL`.
 
 Each feature is a module with the same layers: **routes** map URLs to a **controller**,
 the controller validates input with its **validation** schemas and calls the
-**service**, and the service holds the business logic. Services never see HTTP.
+**service**, and the service holds the business logic. Services never touch Express
+request or response objects.
 
 ```
 src/
@@ -130,6 +131,35 @@ same tables as TypeScript types so every query is type-checked.
   ```bash
   npx newman run docs/CurrencyMesh.postman_collection.json
   ```
+
+## Errors
+
+Every error has the same shape:
+
+```json
+{
+  "error": {
+    "code": "INSUFFICIENT_FUNDS",
+    "message": "Insufficient USDx balance",
+    "details": { "currency": "USDx", "available": "10.000000", "required": "25.000000" },
+    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+  }
+}
+```
+
+`code` is stable for programs, `message` is plain English, `details` is optional extra
+information, and `requestId` matches the server logs.
+
+| Status | Meaning                                            |
+| ------ | -------------------------------------------------- |
+| 400    | Invalid input                                      |
+| 404    | Wallet, transaction or route not found             |
+| 405    | Wrong method for this URL (see the `Allow` header) |
+| 409    | A wallet already exists for this email or phone    |
+| 413    | Request body is too large                          |
+| 415    | Request body is not JSON                           |
+| 422    | Business rule failed, e.g. insufficient funds      |
+| 500    | Unexpected server error                            |
 
 ## FX rates
 

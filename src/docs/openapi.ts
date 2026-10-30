@@ -106,16 +106,10 @@ export function buildOpenApiDocument() {
       title: 'CurrencyMesh API',
       version: '1.0.0',
       description:
-        'Sandbox API for cross-border stablecoin payments: multi-currency wallets, ' +
-        'deposits, FX swaps and transfers across cNGN, cGHS, cXAF, USDx and EURx.\n\n' +
-        'Amounts are decimal strings (e.g. "100.50"), never JSON numbers. Every request ' +
-        'that moves money requires an Idempotency-Key header.\n\n' +
-        'Errors share one shape: `{ "error": { "code", "message", "details"?, "requestId" } }`. ' +
-        '`code` is stable for programs, `message` is plain English, `details` names the ' +
-        'fields that failed, and `requestId` matches the server logs. Status codes: ' +
-        '400 invalid input, 404 not found, 405 wrong method (see the Allow header), ' +
-        '409 duplicate wallet, 413 body too large, 415 body is not JSON, ' +
-        '422 business rule (e.g. insufficient funds), 500 unexpected error.',
+        'Sandbox API for cross-border stablecoin payments across cNGN, cGHS, cXAF, USDx ' +
+        'and EURx.\n\n' +
+        'Amounts are decimal strings, e.g. "100.50". Requests that move money need an ' +
+        '`Idempotency-Key` header.',
     },
     servers: [{ url: 'http://localhost:3000' }],
     tags: [

@@ -2,7 +2,7 @@ import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 import type { CurrencyCode } from '../../src/domain/currencies.js';
 import { createApp } from '../../src/app.js';
-import { FxService } from '../../src/modules/fx/fx.service.js';
+import { FxService } from '../../src/modules/rates/fx.service.js';
 import { setupTestContext, testLogger } from '../helpers/context.js';
 import { FakeFxProvider } from '../helpers/fake-fx.js';
 

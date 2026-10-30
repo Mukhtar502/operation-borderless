@@ -1,8 +1,8 @@
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 import { createApp } from '../../src/app.js';
-import { FxService } from '../../src/modules/fx/fx.service.js';
-import { STATIC_RATES_AS_OF } from '../../src/modules/fx/static-rates.js';
+import { FxService } from '../../src/modules/rates/fx.service.js';
+import { STATIC_RATES_AS_OF } from '../../src/modules/rates/static-rates.js';
 import { setupTestContext, testLogger } from '../helpers/context.js';
 import { FakeFxProvider } from '../helpers/fake-fx.js';
 

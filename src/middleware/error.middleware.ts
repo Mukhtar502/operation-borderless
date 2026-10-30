@@ -1,9 +1,5 @@
-import type { ErrorRequestHandler, RequestHandler } from 'express';
-import { AppError, notFound } from '../lib/errors.js';
-
-export const notFoundHandler: RequestHandler = (req) => {
-  throw notFound('ROUTE_NOT_FOUND', `No route for ${req.method} ${req.path}`);
-};
+import type { ErrorRequestHandler } from 'express';
+import { AppError } from '../lib/errors.js';
 
 // Single place that shapes error responses:
 // { "error": { "code", "message", "details"?, "requestId" } }

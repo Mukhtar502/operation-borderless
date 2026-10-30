@@ -1,7 +1,9 @@
 import { z } from 'zod';
-import { depositBody, swapBody, transferBody } from '../modules/payments/payment.routes.js';
-import { historyQuery } from '../modules/transactions/transaction.routes.js';
-import { createWalletBody } from '../modules/wallets/wallet.routes.js';
+import { depositBody } from '../modules/deposits/deposit.validation.js';
+import { swapBody } from '../modules/swaps/swap.validation.js';
+import { transferBody } from '../modules/transfers/transfer.validation.js';
+import { historyQuery } from '../modules/transactions/transaction.validation.js';
+import { createWalletBody } from '../modules/wallets/wallet.validation.js';
 import { ERROR_EXAMPLES, errorExample, EXAMPLES } from './examples.js';
 import './schemas.js'; // registers the named response schemas used below
 

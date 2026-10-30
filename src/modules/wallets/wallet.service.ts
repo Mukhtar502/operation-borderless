@@ -5,7 +5,7 @@ import { CURRENCIES, CURRENCY_CODES, type CurrencyCode } from '../../domain/curr
 import { normalizeEmail, normalizePhone } from '../../domain/identifiers.js';
 import { Money } from '../../domain/money.js';
 import { conflict, notFound } from '../../lib/errors.js';
-import { quoteFrom, type FxService, type RateSource } from '../fx/fx.service.js';
+import { quoteFrom, type FxService, type RateSource } from '../rates/fx.service.js';
 
 export interface Balance {
   currency: CurrencyCode;

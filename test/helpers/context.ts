@@ -4,7 +4,7 @@ import { afterAll, beforeEach, inject } from 'vitest';
 import { createApp } from '../../src/app.js';
 import { createDb, type DB } from '../../src/db/client.js';
 import { createLogger } from '../../src/lib/logger.js';
-import { FxService } from '../../src/modules/fx/fx.service.js';
+import { FxService } from '../../src/modules/rates/fx.service.js';
 import { FakeFxProvider } from './fake-fx.js';
 
 export const testLogger = createLogger('silent');

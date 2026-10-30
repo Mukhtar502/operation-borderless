@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import { badRequest } from '../lib/errors.js';
-import type { IdempotentResponse } from '../modules/idempotency/idempotency.service.js';
+import { badRequest } from '../../lib/errors.js';
+import type { IdempotentResponse } from './idempotency.service.js';
 
 // Printable ASCII without spaces, 1 to 255 characters. UUIDs are recommended.
 const KEY_PATTERN = /^[\x21-\x7E]{1,255}$/;

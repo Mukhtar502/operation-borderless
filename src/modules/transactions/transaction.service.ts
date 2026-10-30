@@ -3,7 +3,7 @@ import type { DB } from '../../db/client.js';
 import type { Transaction, TransactionType } from '../../db/schema.js';
 import type { CurrencyCode } from '../../domain/currencies.js';
 import { badRequest, notFound } from '../../lib/errors.js';
-import { toTransactionView, type TransactionView } from './transaction.view.js';
+import { toTransactionView, type TransactionView } from './transaction.mapper.js';
 
 /** IN: money arrived. OUT: money left. INTERNAL: a swap inside the wallet. */
 export type Direction = 'IN' | 'OUT' | 'INTERNAL';

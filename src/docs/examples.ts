@@ -1,6 +1,6 @@
 import { CURRENCY_CODES, type CurrencyCode } from '../domain/currencies.js';
 import { Money } from '../domain/money.js';
-import { quoteFrom, type RateSnapshot } from '../modules/fx/fx.service.js';
+import { quoteFrom, type RateSnapshot } from '../modules/rates/fx.service.js';
 
 // Realistic, self-consistent examples for the API docs. Without them Swagger UI
 // invents values from the schema alone (e.g. a DEPOSIT with a sender). A unit test

@@ -3,21 +3,15 @@ import express, { type Express } from 'express';
 import { sql } from 'kysely';
 import { pinoHttp } from 'pino-http';
 import swaggerUi from 'swagger-ui-express';
+import { createServices } from './container.js';
 import type { DB } from './db/client.js';
 import { buildOpenApiDocument } from './docs/openapi.js';
-import { errorHandler, notFoundHandler } from './http/error-handler.js';
-import { requireJsonBody } from './http/methods.js';
 import type { Logger } from './lib/logger.js';
-import { fxRoutes } from './modules/fx/fx.routes.js';
-import type { FxService } from './modules/fx/fx.service.js';
-import { IdempotencyService } from './modules/idempotency/idempotency.service.js';
-import { LedgerService } from './modules/ledger/ledger.service.js';
-import { paymentRoutes } from './modules/payments/payment.routes.js';
-import { PaymentService } from './modules/payments/payment.service.js';
-import { transactionRoutes } from './modules/transactions/transaction.routes.js';
-import { TransactionService } from './modules/transactions/transaction.service.js';
-import { walletRoutes } from './modules/wallets/wallet.routes.js';
-import { WalletService } from './modules/wallets/wallet.service.js';
+import { errorHandler } from './middleware/error.middleware.js';
+import { notFoundHandler } from './middleware/not-found.middleware.js';
+import { requireJsonBody } from './middleware/require-json.middleware.js';
+import type { FxService } from './modules/rates/fx.service.js';
+import { apiRoutes } from './routes/index.js';
 
 export interface AppDeps {
   db: DB;
@@ -30,6 +24,7 @@ export function createApp({ db, logger, fx }: AppDeps): Express {
   app.disable('x-powered-by');
   app.set('trust proxy', false);
 
+  // 1. Request plumbing: logging with a request id, JSON bodies only.
   app.use(
     pinoHttp({
       logger,
@@ -47,7 +42,7 @@ export function createApp({ db, logger, fx }: AppDeps): Express {
   app.use(requireJsonBody);
   app.use(express.json({ limit: '16kb' }));
 
-  // Liveness: the process is up. Readiness: it can reach the database.
+  // 2. Health checks. Liveness: the process is up. Readiness: it can reach the database.
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok' });
   });
@@ -60,14 +55,10 @@ export function createApp({ db, logger, fx }: AppDeps): Express {
     }
   });
 
-  const wallets = new WalletService(db, fx);
-  const payments = new PaymentService(new LedgerService(), new IdempotencyService(db), fx);
-  app.use('/v1', walletRoutes(wallets));
-  app.use('/v1', paymentRoutes(payments));
-  app.use('/v1', transactionRoutes(new TransactionService(db)));
-  app.use('/v1', fxRoutes(fx));
+  // 3. The API.
+  app.use('/v1', apiRoutes(createServices({ db, fx })));
 
-  // Interactive API docs, generated from the same Zod schemas that validate requests.
+  // 4. Interactive docs, generated from the same Zod schemas that validate requests.
   const openApi = buildOpenApiDocument();
   app.get('/docs/openapi.json', (_req, res) => {
     res.json(openApi);
@@ -78,6 +69,7 @@ export function createApp({ db, logger, fx }: AppDeps): Express {
     swaggerUi.setup(openApi, { customSiteTitle: 'CurrencyMesh API' }),
   );
 
+  // 5. Anything else is a 404; every error leaves through one handler.
   app.use(notFoundHandler);
   app.use(errorHandler);
   return app;

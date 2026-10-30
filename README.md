@@ -78,6 +78,43 @@ To use an existing database instead, set `TEST_DATABASE_URL`.
 | Tests     | Vitest, Supertest, Testcontainers        |
 | Tooling   | Yarn, ESLint, Prettier, Docker Compose   |
 
+## Project structure
+
+Each feature is a module with the same layers: **routes** map URLs to a **controller**,
+the controller validates input with its **validation** schemas and calls the
+**service**, and the service holds the business logic. Services never see HTTP.
+
+```
+src/
+├── app.ts                 Express app: middleware, /v1 routes, docs, error handling
+├── server.ts              Starts the server; graceful shutdown
+├── container.ts           Builds every service and wires dependencies together
+├── config/env.ts          Validated environment variables
+├── routes/index.ts        Mounts every module under /v1
+├── middleware/            Errors, 404, 405, JSON-only bodies, request validation
+├── modules/
+│   ├── wallets/           routes · controller · service · validation
+│   ├── deposits/          routes · controller · service · validation
+│   ├── swaps/             routes · controller · service · validation
+│   ├── transfers/         routes · controller · service · validation
+│   ├── transactions/      routes · controller · service · validation · mapper
+│   ├── rates/             routes · controller · FX service, live provider, static table
+│   ├── ledger/            The only code that changes balances (internal, no routes)
+│   └── idempotency/       Safe retries for money requests (internal, no routes)
+├── domain/                Business rules: money, currencies, conversion, phone/email
+├── db/                    Kysely client, data models (schema.ts), migrations
+├── docs/                  OpenAPI document, response schemas, examples
+└── lib/                   Error types, logger
+test/
+├── unit/                  Pure logic, no database
+├── integration/           Real HTTP requests against a real Postgres
+└── helpers/               Test app, fake FX provider, ledger checks
+```
+
+**Data models:** the tables are created by the migrations in `src/db/migrations/`
+(with the constraints that protect the money), and `src/db/schema.ts` describes the
+same tables as TypeScript types so every query is type-checked.
+
 ## API documentation
 
 - **Swagger UI:** <http://localhost:3000/docs> (interactive, with examples)

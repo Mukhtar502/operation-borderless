@@ -1,6 +1,10 @@
 import type { Transaction, TransactionType } from '../../db/schema.js';
 import type { CurrencyCode } from '../../domain/currencies.js';
-import type { FxQuote } from '../fx/fx.service.js';
+import type { HandlerResult, IdempotentResponse } from '../idempotency/idempotency.service.js';
+import type { FxQuote } from '../rates/fx.service.js';
+
+// Maps database rows to the shape the API returns. Every endpoint that returns a
+// transaction (deposits, swaps, transfers, history, lookup) goes through here.
 
 /** Stored in transactions.fx_rate_source when no conversion happened. */
 export const PAR_RATE_SOURCE = 'par';
@@ -21,6 +25,13 @@ export interface TransactionView {
     refreshedAt: Date;
   };
   createdAt: Date;
+}
+
+/** What deposit, swap and transfer services return: a 201 with the new transaction. */
+export type CreatedTransaction = IdempotentResponse<{ data: TransactionView }>;
+
+export function created(row: Transaction): HandlerResult<{ data: TransactionView }> {
+  return { status: 201, body: { data: toTransactionView(row) }, transactionId: row.id };
 }
 
 /** "live:open.er-api.com" style value for transactions.fx_rate_source. */

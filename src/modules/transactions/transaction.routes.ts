@@ -1,36 +1,14 @@
 import { Router } from 'express';
-import { z } from 'zod';
-import { CURRENCY_CODES } from '../../domain/currencies.js';
-import { allowOnly } from '../../http/methods.js';
-import { validate } from '../../http/validate.js';
-import { walletIdParams } from '../wallets/wallet.routes.js';
+import { allowOnly } from '../../middleware/method-not-allowed.middleware.js';
+import { transactionController } from './transaction.controller.js';
 import type { TransactionService } from './transaction.service.js';
 
-export const historyQuery = z.strictObject({
-  limit: z.coerce.number().int().min(1).max(100).default(20),
-  cursor: z.string().min(1).optional(),
-  type: z.enum(['DEPOSIT', 'SWAP', 'TRANSFER']).optional(),
-  currency: z.enum(CURRENCY_CODES).optional(),
-});
-
-export const transactionIdParams = z.object({ transactionId: z.uuid() });
-
 export function transactionRoutes(transactions: TransactionService): Router {
+  const controller = transactionController(transactions);
   const router = Router();
 
-  router.get('/wallets/:walletId/transactions', async (req, res) => {
-    const { walletId } = validate(walletIdParams, req.params, 'params');
-    const query = validate(historyQuery, req.query, 'query');
-    res.json(await transactions.history({ walletId, ...query }));
-  });
-
-  router.get('/transactions/:transactionId', async (req, res) => {
-    const { transactionId } = validate(transactionIdParams, req.params, 'params');
-    res.json({ data: await transactions.get(transactionId) });
-  });
-
-  router.all('/wallets/:walletId/transactions', allowOnly('GET'));
-  router.all('/transactions/:transactionId', allowOnly('GET'));
+  router.route('/wallets/:walletId/transactions').get(controller.history).all(allowOnly('GET'));
+  router.route('/transactions/:transactionId').get(controller.get).all(allowOnly('GET'));
 
   return router;
 }

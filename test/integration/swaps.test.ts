@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createApp } from '../../src/app.js';
 import { Money } from '../../src/domain/money.js';
-import { FxService } from '../../src/modules/fx/fx.service.js';
+import { FxService } from '../../src/modules/rates/fx.service.js';
 import { api, type ErrorBody, type TransactionBody } from '../helpers/api.js';
 import { setupTestContext, testLogger } from '../helpers/context.js';
 import { FakeFxProvider } from '../helpers/fake-fx.js';

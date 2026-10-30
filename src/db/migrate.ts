@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Kysely } from 'kysely';
 import { Migrator, type MigrationResultSet } from 'kysely/migration';
-import { loadConfig } from '../config.js';
+import { loadConfig } from '../config/env.js';
 import { createDb } from './client.js';
 import { initialSchema } from './migrations/001_initial_schema.js';
 import { idempotencyResponseJson } from './migrations/002_idempotency_response_json.js';

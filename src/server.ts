@@ -1,9 +1,9 @@
 import { createApp } from './app.js';
-import { loadConfig } from './config.js';
+import { loadConfig } from './config/env.js';
 import { createDb } from './db/client.js';
 import { createLogger } from './lib/logger.js';
-import { OpenErApiProvider } from './modules/fx/fx.provider.js';
-import { FxService } from './modules/fx/fx.service.js';
+import { OpenErApiProvider } from './modules/rates/fx.provider.js';
+import { FxService } from './modules/rates/fx.service.js';
 
 const config = loadConfig();
 const logger = createLogger(config.LOG_LEVEL);

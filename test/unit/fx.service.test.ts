@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createLogger } from '../../src/lib/logger.js';
-import { OpenErApiProvider, type FxProvider } from '../../src/modules/fx/fx.provider.js';
-import { FxService } from '../../src/modules/fx/fx.service.js';
-import { STATIC_RATES_AS_OF } from '../../src/modules/fx/static-rates.js';
+import { OpenErApiProvider, type FxProvider } from '../../src/modules/rates/fx.provider.js';
+import { FxService } from '../../src/modules/rates/fx.service.js';
+import { STATIC_RATES_AS_OF } from '../../src/modules/rates/static-rates.js';
 
 const logger = createLogger('silent');
 const LIVE = { USD: 1, EUR: 0.9, NGN: 1500, GHS: 15, XAF: 590, JPY: 150 };

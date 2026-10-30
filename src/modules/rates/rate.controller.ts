@@ -1,13 +1,10 @@
-import { Router } from 'express';
+import type { RequestHandler } from 'express';
 import { CURRENCY_CODES } from '../../domain/currencies.js';
-import { allowOnly } from '../../http/methods.js';
 import { quoteFrom, type FxService } from './fx.service.js';
 
-export function fxRoutes(fx: FxService): Router {
-  const router = Router();
-
+export function rateController(fx: FxService) {
   // Every directed pair between different currencies: 5 x 4 = 20 rates.
-  router.get('/rates', async (_req, res) => {
+  const list: RequestHandler = async (_req, res) => {
     const snapshot = await fx.getSnapshot();
     const rates = CURRENCY_CODES.flatMap((from) =>
       CURRENCY_CODES.filter((to) => to !== from).map((to) => {
@@ -23,9 +20,7 @@ export function fxRoutes(fx: FxService): Router {
         rates,
       },
     });
-  });
+  };
 
-  router.all('/rates', allowOnly('GET'));
-
-  return router;
+  return { list };
 }

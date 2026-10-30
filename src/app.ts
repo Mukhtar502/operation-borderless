@@ -55,7 +55,7 @@ export function createApp({ db, logger, fx }: AppDeps): Express {
   });
 
   const wallets = new WalletService(db, fx);
-  const payments = new PaymentService(new LedgerService(), new IdempotencyService(db));
+  const payments = new PaymentService(new LedgerService(), new IdempotencyService(db), fx);
   app.use('/v1', walletRoutes(wallets));
   app.use('/v1', paymentRoutes(payments));
   app.use('/v1', fxRoutes(fx));

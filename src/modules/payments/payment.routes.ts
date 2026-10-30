@@ -11,6 +11,7 @@ const currency = z.enum(CURRENCY_CODES);
 const amount = z.string({ error: 'amount must be a string, e.g. "100.50"' });
 
 export const depositBody = z.strictObject({ currency, amount });
+export const swapBody = z.strictObject({ fromCurrency: currency, toCurrency: currency, amount });
 
 export function paymentRoutes(payments: PaymentService): Router {
   const router = Router();
@@ -20,6 +21,13 @@ export function paymentRoutes(payments: PaymentService): Router {
     const body = validate(depositBody, req.body);
     const idempotencyKey = requireIdempotencyKey(req);
     sendIdempotent(res, await payments.deposit({ walletId, idempotencyKey, ...body }));
+  });
+
+  router.post('/wallets/:walletId/swaps', async (req, res) => {
+    const { walletId } = validate(walletIdParams, req.params);
+    const body = validate(swapBody, req.body);
+    const idempotencyKey = requireIdempotencyKey(req);
+    sendIdempotent(res, await payments.swap({ walletId, idempotencyKey, ...body }));
   });
 
   return router;

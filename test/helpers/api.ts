@@ -34,6 +34,20 @@ export function api(app: Express) {
       return req.send(body);
     },
 
+    swap(walletId: string, body: object, key: string = randomUUID()) {
+      return request(app)
+        .post(`/v1/wallets/${walletId}/swaps`)
+        .set('Idempotency-Key', key)
+        .send(body);
+    },
+
+    /** Creates a wallet and funds it in one currency. */
+    async fundedWallet(email: string, currency: string, amount: string): Promise<string> {
+      const id = await this.createWallet(email);
+      await this.deposit(id, { currency, amount }).expect(201);
+      return id;
+    },
+
     async balance(walletId: string, currency: string): Promise<string> {
       const res = await request(app).get(`/v1/wallets/${walletId}`).expect(200);
       const { balances } = (

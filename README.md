@@ -102,7 +102,7 @@ retrying a failed provider, and concurrent requests share one provider call.
 - [x] Current FX rates endpoint
 - [x] Wallet balances with total in USD
 - [x] Deposits
-- [ ] Swaps
+- [x] Swaps
 - [ ] Transfers
 - [ ] Transaction history with pagination and filters
 - [ ] OpenAPI documentation

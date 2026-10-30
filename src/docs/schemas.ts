@@ -40,6 +40,10 @@ export const Wallet = z
     id: Uuid,
     email: z.string().nullable().meta({ example: 'ada@example.com' }),
     phone: z.string().nullable().meta({ example: '+2348012345678' }),
+    totalUsd: Amount.meta({
+      description: 'All balances valued in USD at current rates; see /balances for the breakdown',
+      example: '3.900889',
+    }),
     balances: z.array(Balance),
     createdAt: Timestamp,
   })
@@ -48,9 +52,9 @@ export const Wallet = z
 export const WalletBalances = z
   .strictObject({
     walletId: Uuid,
-    balances: z.array(Balance.extend({ usdValue: Amount })),
-    totalUsd: Amount,
+    totalUsd: Amount.meta({ description: 'Sum of the usdValue lines', example: '3.900889' }),
     fx: z.strictObject({ source: RateSource, provider: z.string(), refreshedAt: Timestamp }),
+    balances: z.array(Balance.extend({ usdValue: Amount })),
   })
   .meta({ id: 'WalletBalances' });
 

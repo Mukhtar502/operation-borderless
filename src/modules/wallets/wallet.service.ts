@@ -12,18 +12,21 @@ export interface Balance {
   amount: string;
 }
 
+/** The breakdown: how each balance converts to USD and which rates were used. */
 export interface WalletBalances {
   walletId: string;
-  balances: (Balance & { usdValue: string })[];
   /** Sum of the usdValue lines, in USDx at USDx precision. */
   totalUsd: string;
   fx: { source: RateSource; provider: string; refreshedAt: Date };
+  balances: (Balance & { usdValue: string })[];
 }
 
+/** The summary: who owns the wallet, what it holds and what that is worth in USD. */
 export interface WalletView {
   id: string;
   email: string | null;
   phone: string | null;
+  totalUsd: string;
   balances: Balance[];
   createdAt: Date;
 }
@@ -85,17 +88,11 @@ export class WalletService {
       id: wallet.id,
       email: wallet.email,
       phone: wallet.phone,
-      balances: await this.loadBalances(walletId),
+      ...(await this.summarise(walletId)),
       createdAt: wallet.created_at,
     };
   }
 
-  /**
-   * Current balances, each valued in USDx, plus the total. Balances are read straight
-   * from the database (never cached), and every line uses the same rate snapshot.
-   * Each line is rounded half-even to USDx precision and the total is the sum of
-   * the lines, so the numbers a client sees always add up.
-   */
   async getBalances(walletId: string): Promise<WalletBalances> {
     const exists = await this.db
       .selectFrom('wallets')
@@ -104,6 +101,31 @@ export class WalletService {
       .executeTakeFirst();
     if (!exists) throw notFound('WALLET_NOT_FOUND', 'Wallet not found');
 
+    const { totalUsd, snapshot, lines } = await this.valueInUsd(walletId);
+    return {
+      walletId,
+      totalUsd,
+      fx: {
+        source: snapshot.source,
+        provider: snapshot.provider,
+        refreshedAt: snapshot.refreshedAt,
+      },
+      balances: lines,
+    };
+  }
+
+  private async summarise(walletId: string): Promise<Pick<WalletView, 'totalUsd' | 'balances'>> {
+    const { totalUsd, lines } = await this.valueInUsd(walletId);
+    return { totalUsd, balances: lines.map(({ currency, amount }) => ({ currency, amount })) };
+  }
+
+  /**
+   * Values every balance in USDx. Balances are read straight from the database (never
+   * cached), and every line uses the same rate snapshot. Each line is rounded half-even
+   * to USDx precision and the total is the sum of the lines, so the numbers a client
+   * sees always add up.
+   */
+  private async valueInUsd(walletId: string) {
     const [balances, snapshot] = await Promise.all([
       this.loadBalances(walletId),
       this.fx.getSnapshot(),
@@ -120,16 +142,7 @@ export class WalletService {
       return { ...balance, usdValue: usdValue.toFixed(usdDecimals) };
     });
 
-    return {
-      walletId,
-      balances: lines,
-      totalUsd: total.toFixed(usdDecimals),
-      fx: {
-        source: snapshot.source,
-        provider: snapshot.provider,
-        refreshedAt: snapshot.refreshedAt,
-      },
-    };
+    return { totalUsd: total.toFixed(usdDecimals), snapshot, lines };
   }
 
   private async loadBalances(walletId: string): Promise<Balance[]> {

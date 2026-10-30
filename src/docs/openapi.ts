@@ -125,7 +125,10 @@ export function buildOpenApiDocument() {
       '/v1/wallets/{walletId}': {
         get: {
           tags: ['Wallets'],
-          summary: 'Get a wallet',
+          summary: 'Get a wallet with its balances and total in USD',
+          description:
+            'The summary view: who owns the wallet, what it holds, and the total in USD. ' +
+            'For the USD value of each balance and the rates used, see /balances.',
           parameters: [walletIdParam],
           responses: {
             200: { description: 'The wallet', content: json('WalletResponse') },
@@ -136,9 +139,10 @@ export function buildOpenApiDocument() {
       '/v1/wallets/{walletId}/balances': {
         get: {
           tags: ['Wallets'],
-          summary: 'Get balances with the total in USD',
+          summary: 'Get the USD breakdown of every balance',
           description:
-            'Each balance is valued in USDx at the current rate. All lines use one rate ' +
+            'The breakdown view: each balance valued in USDx at the current rate, the total, ' +
+            'and which rates were used (source and refresh time). All lines use one rate ' +
             'snapshot, and totalUsd is the sum of the lines.',
           parameters: [walletIdParam],
           responses: {

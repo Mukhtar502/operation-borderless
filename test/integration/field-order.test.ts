@@ -67,3 +67,27 @@ describe('response field order', () => {
     ]);
   });
 });
+
+describe('wallet totals', () => {
+  it('shows the USD total near the top of both wallet endpoints, and they agree', async () => {
+    const wallet = await client.fundedWallet('total@example.com', 'cNGN', '1500');
+    await client.deposit(wallet, { currency: 'USDx', amount: '2' }).expect(201);
+
+    const summary = await request(app).get(`/v1/wallets/${wallet}`).expect(200);
+    const breakdown = await request(app).get(`/v1/wallets/${wallet}/balances`).expect(200);
+
+    expect(keysOf(summary.body)).toEqual([
+      'id',
+      'email',
+      'phone',
+      'totalUsd',
+      'balances',
+      'createdAt',
+    ]);
+    expect(keysOf(breakdown.body)).toEqual(['walletId', 'totalUsd', 'fx', 'balances']);
+
+    const total = (body: unknown) => (body as { data: { totalUsd: string } }).data.totalUsd;
+    expect(total(summary.body)).toBe('3.000000'); // 1500 cNGN = 1 USD, plus 2 USDx
+    expect(total(breakdown.body)).toBe(total(summary.body));
+  });
+});

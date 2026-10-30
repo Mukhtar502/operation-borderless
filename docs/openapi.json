@@ -94,7 +94,8 @@
     "/v1/wallets/{walletId}": {
       "get": {
         "tags": ["Wallets"],
-        "summary": "Get a wallet",
+        "summary": "Get a wallet with its balances and total in USD",
+        "description": "The summary view: who owns the wallet, what it holds, and the total in USD. For the USD value of each balance and the rates used, see /balances.",
         "parameters": [
           {
             "name": "walletId",
@@ -133,8 +134,8 @@
     "/v1/wallets/{walletId}/balances": {
       "get": {
         "tags": ["Wallets"],
-        "summary": "Get balances with the total in USD",
-        "description": "Each balance is valued in USDx at the current rate. All lines use one rate snapshot, and totalUsd is the sum of the lines.",
+        "summary": "Get the USD breakdown of every balance",
+        "description": "The breakdown view: each balance valued in USDx at the current rate, the total, and which rates were used (source and refresh time). All lines use one rate snapshot, and totalUsd is the sum of the lines.",
         "parameters": [
           {
             "name": "walletId",
@@ -732,6 +733,12 @@
             "example": "+2348012345678",
             "type": ["string", "null"]
           },
+          "totalUsd": {
+            "type": "string",
+            "pattern": "^-?\\d+\\.\\d{6}$",
+            "description": "All balances valued in USD at current rates; see /balances for the breakdown",
+            "example": "3.900889"
+          },
           "balances": {
             "type": "array",
             "items": {
@@ -745,7 +752,7 @@
             "example": "2026-10-30T09:15:00.000Z"
           }
         },
-        "required": ["id", "email", "phone", "balances", "createdAt"],
+        "required": ["id", "email", "phone", "totalUsd", "balances", "createdAt"],
         "additionalProperties": false
       },
       "WalletBalances": {
@@ -756,6 +763,33 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
             "example": "3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90"
+          },
+          "totalUsd": {
+            "type": "string",
+            "pattern": "^-?\\d+\\.\\d{6}$",
+            "description": "Sum of the usdValue lines",
+            "example": "3.900889"
+          },
+          "fx": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string",
+                "enum": ["live", "stale", "static"],
+                "description": "live: fresh from provider; stale: last good rates; static: built-in table"
+              },
+              "provider": {
+                "type": "string"
+              },
+              "refreshedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                "example": "2026-10-30T09:15:00.000Z"
+              }
+            },
+            "required": ["source", "provider", "refreshedAt"],
+            "additionalProperties": false
           },
           "balances": {
             "type": "array",
@@ -783,36 +817,9 @@
               "required": ["currency", "amount", "usdValue"],
               "additionalProperties": false
             }
-          },
-          "totalUsd": {
-            "type": "string",
-            "pattern": "^-?\\d+\\.\\d{6}$",
-            "description": "Decimal string at 6 decimal places",
-            "example": "5000.500000"
-          },
-          "fx": {
-            "type": "object",
-            "properties": {
-              "source": {
-                "type": "string",
-                "enum": ["live", "stale", "static"],
-                "description": "live: fresh from provider; stale: last good rates; static: built-in table"
-              },
-              "provider": {
-                "type": "string"
-              },
-              "refreshedAt": {
-                "type": "string",
-                "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                "example": "2026-10-30T09:15:00.000Z"
-              }
-            },
-            "required": ["source", "provider", "refreshedAt"],
-            "additionalProperties": false
           }
         },
-        "required": ["walletId", "balances", "totalUsd", "fx"],
+        "required": ["walletId", "totalUsd", "fx", "balances"],
         "additionalProperties": false
       },
       "Rates": {

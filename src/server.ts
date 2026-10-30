@@ -18,7 +18,7 @@ const fx = new FxService(
 const app = createApp({ db, logger, fx });
 
 const server = app.listen(config.PORT, () => {
-  logger.info({ port: config.PORT, env: config.NODE_ENV }, 'Borderless API listening');
+  logger.info({ port: config.PORT, env: config.NODE_ENV }, 'CurrencyMesh API listening');
   // Warm the FX cache so the first real request does not pay for a cold connection.
   // getSnapshot() never throws; on failure it falls back and retries later.
   void fx.getSnapshot().then((snapshot) => {

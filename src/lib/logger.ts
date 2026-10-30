@@ -5,7 +5,7 @@ export type { Logger };
 export function createLogger(level: string): Logger {
   return pino({
     level,
-    base: { service: 'borderless-api' },
+    base: { service: 'currencymesh-api' },
     redact: ['req.headers.authorization', 'req.headers.cookie'],
   });
 }

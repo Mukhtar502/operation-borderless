@@ -27,7 +27,7 @@ services:
   # One-shot job: applies migrations, then exits. The API only starts after it succeeds.
   migrate:
     build: .
-    image: borderless-api:local
+    image: currencymesh-api:local
     command: ['node', 'dist/db/migrate.js']
     environment: *api-env
     depends_on:
@@ -36,7 +36,7 @@ services:
 
   api:
     build: .
-    image: borderless-api:local
+    image: currencymesh-api:local
     environment:
       <<: *api-env
       PORT: 3000

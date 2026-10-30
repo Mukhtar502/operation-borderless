@@ -78,6 +78,22 @@ To use an existing database instead, set `TEST_DATABASE_URL`.
 | Tests     | Vitest, Supertest, Testcontainers        |
 | Tooling   | Yarn, ESLint, Prettier, Docker Compose   |
 
+## API documentation
+
+- **Swagger UI:** <http://localhost:3000/docs> (interactive, with examples)
+- **OpenAPI 3.1 spec:** [`docs/openapi.json`](docs/openapi.json), also served at
+  `/docs/openapi.json`. Generated from the same Zod schemas that validate
+  requests; refresh it with `yarn docs:openapi`. A test fails if it is out of date.
+- **Postman collection:**
+  [`docs/CurrencyMesh.postman_collection.json`](docs/CurrencyMesh.postman_collection.json).
+  Import it into Postman and press **Run collection**: it creates two wallets,
+  deposits, swaps, transfers, reads history and shows an idempotent retry, with a
+  test on every request. It also runs from the command line:
+
+  ```bash
+  npx newman run docs/CurrencyMesh.postman_collection.json
+  ```
+
 ## FX rates
 
 `GET /v1/rates` returns the rate for every pair of different currencies
@@ -105,7 +121,7 @@ retrying a failed provider, and concurrent requests share one provider call.
 - [x] Swaps
 - [x] Transfers
 - [x] Transaction history with pagination and filters
-- [ ] OpenAPI documentation
+- [x] OpenAPI documentation and Postman collection
 - [ ] CI pipeline
 
 ## Acknowledgements

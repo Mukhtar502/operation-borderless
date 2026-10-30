@@ -75,6 +75,10 @@ const moneyErrors = {
 const transactionCreated = (description: string, example: unknown) => ({
   description,
   headers: {
+    Location: {
+      description: 'Where the new transaction can be fetched',
+      schema: { type: 'string', example: '/v1/transactions/8f2b6e3c-4d5a-4b7c-8e1f-2a3b4c5d6e7f' },
+    },
     'Idempotent-Replayed': {
       description: 'true when this response was replayed from an earlier request with the same key',
       schema: { type: 'string', enum: ['true', 'false'] },
@@ -103,7 +107,13 @@ export function buildOpenApiDocument() {
         'Sandbox API for cross-border stablecoin payments: multi-currency wallets, ' +
         'deposits, FX swaps and transfers across cNGN, cGHS, cXAF, USDx and EURx.\n\n' +
         'Amounts are decimal strings (e.g. "100.50"), never JSON numbers. Every request ' +
-        'that moves money requires an Idempotency-Key header.',
+        'that moves money requires an Idempotency-Key header.\n\n' +
+        'Errors share one shape: `{ "error": { "code", "message", "details"?, "requestId" } }`. ' +
+        '`code` is stable for programs, `message` is plain English, `details` names the ' +
+        'fields that failed, and `requestId` matches the server logs. Status codes: ' +
+        '400 invalid input, 404 not found, 405 wrong method (see the Allow header), ' +
+        '409 duplicate wallet, 413 body too large, 415 body is not JSON, ' +
+        '422 business rule (e.g. insufficient funds), 500 unexpected error.',
     },
     servers: [{ url: 'http://localhost:3000' }],
     tags: [
@@ -125,6 +135,15 @@ export function buildOpenApiDocument() {
           responses: {
             201: {
               description: 'Wallet created',
+              headers: {
+                Location: {
+                  description: 'Where the new wallet can be fetched',
+                  schema: {
+                    type: 'string',
+                    example: '/v1/wallets/3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90',
+                  },
+                },
+              },
               content: json('WalletResponse', EXAMPLES.WalletResponse),
             },
             400: error('Invalid email or phone', ERROR_EXAMPLES.validation),

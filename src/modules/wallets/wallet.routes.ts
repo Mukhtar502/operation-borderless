@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
+import { allowOnly } from '../../http/methods.js';
 import { validate } from '../../http/validate.js';
 import type { WalletService } from './wallet.service.js';
 
@@ -24,14 +25,18 @@ export function walletRoutes(wallets: WalletService): Router {
   });
 
   router.get('/wallets/:walletId', async (req, res) => {
-    const { walletId } = validate(walletIdParams, req.params);
+    const { walletId } = validate(walletIdParams, req.params, 'params');
     res.json({ data: await wallets.get(walletId) });
   });
 
   router.get('/wallets/:walletId/balances', async (req, res) => {
-    const { walletId } = validate(walletIdParams, req.params);
+    const { walletId } = validate(walletIdParams, req.params, 'params');
     res.json({ data: await wallets.getBalances(walletId) });
   });
+
+  router.all('/wallets', allowOnly('POST'));
+  router.all('/wallets/:walletId', allowOnly('GET'));
+  router.all('/wallets/:walletId/balances', allowOnly('GET'));
 
   return router;
 }

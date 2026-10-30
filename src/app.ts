@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 import type { DB } from './db/client.js';
 import { buildOpenApiDocument } from './docs/openapi.js';
 import { errorHandler, notFoundHandler } from './http/error-handler.js';
+import { requireJsonBody } from './http/methods.js';
 import type { Logger } from './lib/logger.js';
 import { fxRoutes } from './modules/fx/fx.routes.js';
 import type { FxService } from './modules/fx/fx.service.js';
@@ -43,6 +44,7 @@ export function createApp({ db, logger, fx }: AppDeps): Express {
       autoLogging: { ignore: (req) => req.url === '/health' },
     }),
   );
+  app.use(requireJsonBody);
   app.use(express.json({ limit: '16kb' }));
 
   // Liveness: the process is up. Readiness: it can reach the database.

@@ -129,12 +129,9 @@ export const EXAMPLES = {
 export const ERROR_EXAMPLES = {
   validation: {
     code: 'VALIDATION_ERROR',
-    message: 'Request validation failed',
+    message: 'currency must be one of: cNGN, cGHS, cXAF, USDx, EURx',
     details: [
-      {
-        path: 'currency',
-        message: 'Invalid option: expected one of "cNGN"|"cGHS"|"cXAF"|"USDx"|"EURx"',
-      },
+      { path: 'currency', message: 'currency must be one of: cNGN, cGHS, cXAF, USDx, EURx' },
     ],
   },
   walletNotFound: { code: 'WALLET_NOT_FOUND', message: 'Wallet not found' },

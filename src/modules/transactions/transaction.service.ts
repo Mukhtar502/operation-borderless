@@ -101,7 +101,11 @@ export class TransactionService {
         .select('id')
         .where('id', '=', id)
         .executeTakeFirst());
-    if (!id || !exists) throw badRequest('INVALID_CURSOR', 'cursor is not valid');
+    if (!id || !exists)
+      throw badRequest(
+        'INVALID_CURSOR',
+        'cursor is not valid; use pagination.nextCursor from a previous response',
+      );
     return id;
   }
 }

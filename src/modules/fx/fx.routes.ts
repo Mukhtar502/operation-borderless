@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { CURRENCY_CODES } from '../../domain/currencies.js';
+import { allowOnly } from '../../http/methods.js';
 import { quoteFrom, type FxService } from './fx.service.js';
 
 export function fxRoutes(fx: FxService): Router {
@@ -23,6 +24,8 @@ export function fxRoutes(fx: FxService): Router {
       },
     });
   });
+
+  router.all('/rates', allowOnly('GET'));
 
   return router;
 }

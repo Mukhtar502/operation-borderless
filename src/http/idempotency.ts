@@ -23,6 +23,11 @@ export function requireIdempotencyKey(req: Request): string {
   return key;
 }
 
-export function sendIdempotent(res: Response, result: IdempotentResponse<unknown>): void {
+export function sendIdempotent(
+  res: Response,
+  result: IdempotentResponse<{ data: { id: string } }>,
+): void {
+  // Like wallet creation: a created transaction says where it can be fetched.
+  if (result.status === 201) res.location(`/v1/transactions/${result.body.data.id}`);
   res.status(result.status).set('Idempotent-Replayed', String(result.replayed)).json(result.body);
 }

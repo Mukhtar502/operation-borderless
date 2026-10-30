@@ -5,11 +5,13 @@ import { Migrator, type MigrationResultSet } from 'kysely/migration';
 import { loadConfig } from '../config.js';
 import { createDb } from './client.js';
 import { initialSchema } from './migrations/001_initial_schema.js';
+import { idempotencyResponseJson } from './migrations/002_idempotency_response_json.js';
 
 // Migrations are registered statically (not read from disk) so the same list works
 // from ts sources under tsx/Vitest and from compiled JS in the Docker image.
 const migrations = {
   '001_initial_schema': initialSchema,
+  '002_idempotency_response_json': idempotencyResponseJson,
 };
 
 function migrator(db: Kysely<unknown>): Migrator {

@@ -79,8 +79,8 @@ export class IdempotencyService {
       }
 
       const result = await handler(trx);
-      // Return the body as stored, not as built. jsonb re-orders object keys, so this
-      // is what makes the first response and every replay byte-for-byte identical.
+      // Return the body as stored, not as built, so the first response and every
+      // replay come from the same bytes and are always identical.
       const saved = await trx
         .updateTable('idempotency_keys')
         .set({

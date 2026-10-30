@@ -79,10 +79,11 @@ export class TransactionService {
     const last = page.at(-1);
 
     return {
-      data: page.map((row) => ({
-        ...toTransactionView(row),
-        direction: directionOf(row, walletId),
-      })),
+      data: page.map((row) => {
+        // Put direction right after type, where a reader looks for it.
+        const { id, type, ...rest } = toTransactionView(row);
+        return { id, type, direction: directionOf(row, walletId), ...rest };
+      }),
       pagination: {
         limit,
         hasMore,

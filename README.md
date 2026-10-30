@@ -104,7 +104,7 @@ retrying a failed provider, and concurrent requests share one provider call.
 - [x] Deposits
 - [x] Swaps
 - [x] Transfers
-- [ ] Transaction history with pagination and filters
+- [x] Transaction history with pagination and filters
 - [ ] OpenAPI documentation
 - [ ] CI pipeline
 

@@ -2,7 +2,9 @@ import { randomUUID } from 'node:crypto';
 import express, { type Express } from 'express';
 import { sql } from 'kysely';
 import { pinoHttp } from 'pino-http';
+import swaggerUi from 'swagger-ui-express';
 import type { DB } from './db/client.js';
+import { buildOpenApiDocument } from './docs/openapi.js';
 import { errorHandler, notFoundHandler } from './http/error-handler.js';
 import type { Logger } from './lib/logger.js';
 import { fxRoutes } from './modules/fx/fx.routes.js';
@@ -62,6 +64,17 @@ export function createApp({ db, logger, fx }: AppDeps): Express {
   app.use('/v1', paymentRoutes(payments));
   app.use('/v1', transactionRoutes(new TransactionService(db)));
   app.use('/v1', fxRoutes(fx));
+
+  // Interactive API docs, generated from the same Zod schemas that validate requests.
+  const openApi = buildOpenApiDocument();
+  app.get('/docs/openapi.json', (_req, res) => {
+    res.json(openApi);
+  });
+  app.use(
+    '/docs',
+    swaggerUi.serve,
+    swaggerUi.setup(openApi, { customSiteTitle: 'CurrencyMesh API' }),
+  );
 
   app.use(notFoundHandler);
   app.use(errorHandler);

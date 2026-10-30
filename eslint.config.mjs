@@ -13,6 +13,8 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
+      // Allows `const { omitted, ...rest } = obj` to drop fields from an object.
+      '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
     },
   },
   { files: ['**/*.mjs'], ...tseslint.configs.disableTypeChecked },

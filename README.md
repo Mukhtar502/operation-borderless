@@ -103,7 +103,7 @@ retrying a failed provider, and concurrent requests share one provider call.
 - [x] Wallet balances with total in USD
 - [x] Deposits
 - [x] Swaps
-- [ ] Transfers
+- [x] Transfers
 - [ ] Transaction history with pagination and filters
 - [ ] OpenAPI documentation
 - [ ] CI pipeline

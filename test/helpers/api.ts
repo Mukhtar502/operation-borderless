@@ -41,6 +41,10 @@ export function api(app: Express) {
         .send(body);
     },
 
+    transfer(body: object, key: string = randomUUID()) {
+      return request(app).post('/v1/transfers').set('Idempotency-Key', key).send(body);
+    },
+
     /** Creates a wallet and funds it in one currency. */
     async fundedWallet(email: string, currency: string, amount: string): Promise<string> {
       const id = await this.createWallet(email);

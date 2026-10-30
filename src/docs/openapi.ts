@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { depositBody, swapBody, transferBody } from '../modules/payments/payment.routes.js';
 import { historyQuery } from '../modules/transactions/transaction.routes.js';
 import { createWalletBody } from '../modules/wallets/wallet.routes.js';
+import { ERROR_EXAMPLES, errorExample, EXAMPLES } from './examples.js';
 import './schemas.js'; // registers the named response schemas used below
 
 type JsonSchema = Record<string, unknown>;
@@ -31,14 +32,19 @@ function inputSchema(schema: z.ZodType): JsonSchema {
 
 const ref = (id: string) => ({ $ref: `#/components/schemas/${id}` });
 
-const json = (id: string) => ({ 'application/json': { schema: ref(id) } });
+const json = (id: string, example: unknown) => ({
+  'application/json': { schema: ref(id), example },
+});
 
 const requestBody = (schema: z.ZodType, example: unknown) => ({
   required: true,
   content: { 'application/json': { schema: inputSchema(schema), example } },
 });
 
-const error = (description: string) => ({ description, content: json('Error') });
+const error = (description: string, example: Record<string, unknown>) => ({
+  description,
+  content: json('Error', errorExample(example)),
+});
 
 const walletIdParam = {
   name: 'walletId',
@@ -58,14 +64,15 @@ const idempotencyHeader = {
 };
 
 const moneyErrors = {
-  400: error('Invalid input, or missing Idempotency-Key'),
-  404: error('Wallet not found'),
+  400: error('Invalid input, or missing Idempotency-Key', ERROR_EXAMPLES.validation),
+  404: error('Wallet not found', ERROR_EXAMPLES.walletNotFound),
   422: error(
     'INSUFFICIENT_FUNDS, AMOUNT_TOO_SMALL, or IDEMPOTENCY_KEY_REUSED (same key, different body)',
+    ERROR_EXAMPLES.insufficientFunds,
   ),
 };
 
-const transactionCreated = (description: string) => ({
+const transactionCreated = (description: string, example: unknown) => ({
   description,
   headers: {
     'Idempotent-Replayed': {
@@ -73,7 +80,7 @@ const transactionCreated = (description: string) => ({
       schema: { type: 'string', enum: ['true', 'false'] },
     },
   },
-  content: json('TransactionResponse'),
+  content: json('TransactionResponse', example),
 });
 
 function queryParameters(schema: z.ZodType) {
@@ -116,9 +123,12 @@ export function buildOpenApiDocument() {
             'can own only one wallet. Starts with a zero balance in every currency.',
           requestBody: requestBody(createWalletBody, { email: 'ada@example.com' }),
           responses: {
-            201: { description: 'Wallet created', content: json('WalletResponse') },
-            400: error('Invalid email or phone'),
-            409: error('WALLET_ALREADY_EXISTS'),
+            201: {
+              description: 'Wallet created',
+              content: json('WalletResponse', EXAMPLES.WalletResponse),
+            },
+            400: error('Invalid email or phone', ERROR_EXAMPLES.validation),
+            409: error('WALLET_ALREADY_EXISTS', ERROR_EXAMPLES.walletExists),
           },
         },
       },
@@ -131,8 +141,11 @@ export function buildOpenApiDocument() {
             'For the USD value of each balance and the rates used, see /balances.',
           parameters: [walletIdParam],
           responses: {
-            200: { description: 'The wallet', content: json('WalletResponse') },
-            404: error('Wallet not found'),
+            200: {
+              description: 'The wallet',
+              content: json('WalletResponse', EXAMPLES.WalletResponse),
+            },
+            404: error('Wallet not found', ERROR_EXAMPLES.walletNotFound),
           },
         },
       },
@@ -146,8 +159,11 @@ export function buildOpenApiDocument() {
             'snapshot, and totalUsd is the sum of the lines.',
           parameters: [walletIdParam],
           responses: {
-            200: { description: 'Balances', content: json('WalletBalancesResponse') },
-            404: error('Wallet not found'),
+            200: {
+              description: 'Balances',
+              content: json('WalletBalancesResponse', EXAMPLES.WalletBalancesResponse),
+            },
+            404: error('Wallet not found', ERROR_EXAMPLES.walletNotFound),
           },
         },
       },
@@ -157,7 +173,10 @@ export function buildOpenApiDocument() {
           summary: 'Deposit funds (simulated)',
           parameters: [walletIdParam, idempotencyHeader],
           requestBody: requestBody(depositBody, { currency: 'cNGN', amount: '5000.50' }),
-          responses: { 201: transactionCreated('Deposit recorded'), ...moneyErrors },
+          responses: {
+            201: transactionCreated('Deposit recorded', EXAMPLES.DepositResponse),
+            ...moneyErrors,
+          },
         },
       },
       '/v1/wallets/{walletId}/swaps': {
@@ -173,7 +192,10 @@ export function buildOpenApiDocument() {
             toCurrency: 'cNGN',
             amount: '40',
           }),
-          responses: { 201: transactionCreated('Swap recorded'), ...moneyErrors },
+          responses: {
+            201: transactionCreated('Swap recorded', EXAMPLES.SwapResponse),
+            ...moneyErrors,
+          },
         },
       },
       '/v1/transfers': {
@@ -191,7 +213,10 @@ export function buildOpenApiDocument() {
             destinationCurrency: 'cGHS',
             amount: '20',
           }),
-          responses: { 201: transactionCreated('Transfer recorded'), ...moneyErrors },
+          responses: {
+            201: transactionCreated('Transfer recorded', EXAMPLES.TransferResponse),
+            ...moneyErrors,
+          },
         },
       },
       '/v1/wallets/{walletId}/transactions': {
@@ -203,9 +228,12 @@ export function buildOpenApiDocument() {
             'pagination.nextCursor back as ?cursor= for the next page.',
           parameters: [walletIdParam, ...queryParameters(historyQuery)],
           responses: {
-            200: { description: 'One page of history', content: json('TransactionHistory') },
-            400: error('Invalid query or cursor'),
-            404: error('Wallet not found'),
+            200: {
+              description: 'One page of history',
+              content: json('TransactionHistory', EXAMPLES.TransactionHistory),
+            },
+            400: error('Invalid query or cursor', ERROR_EXAMPLES.invalidCursor),
+            404: error('Wallet not found', ERROR_EXAMPLES.walletNotFound),
           },
         },
       },
@@ -222,8 +250,11 @@ export function buildOpenApiDocument() {
             },
           ],
           responses: {
-            200: { description: 'The transaction', content: json('TransactionResponse') },
-            404: error('Transaction not found'),
+            200: {
+              description: 'The transaction',
+              content: json('TransactionResponse', EXAMPLES.TransferResponse),
+            },
+            404: error('Transaction not found', ERROR_EXAMPLES.transactionNotFound),
           },
         },
       },
@@ -234,7 +265,9 @@ export function buildOpenApiDocument() {
           description:
             'All 20 pairs, each with the time it was last refreshed. If the live provider ' +
             'is down, the last good (stale) or built-in (static) rates are served instead.',
-          responses: { 200: { description: 'Rates', content: json('RatesResponse') } },
+          responses: {
+            200: { description: 'Rates', content: json('RatesResponse', EXAMPLES.RatesResponse) },
+          },
         },
       },
       '/health': {

@@ -64,6 +64,37 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/WalletResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90",
+                    "email": "ada@example.com",
+                    "phone": "+2348012345678",
+                    "totalUsd": "80.000000",
+                    "balances": [
+                      {
+                        "currency": "cNGN",
+                        "amount": "53849.475520"
+                      },
+                      {
+                        "currency": "cGHS",
+                        "amount": "0.000000"
+                      },
+                      {
+                        "currency": "cXAF",
+                        "amount": "0.000000"
+                      },
+                      {
+                        "currency": "USDx",
+                        "amount": "40.000000"
+                      },
+                      {
+                        "currency": "EURx",
+                        "amount": "0.000000"
+                      }
+                    ],
+                    "createdAt": "2026-10-30T09:14:00.000Z"
+                  }
                 }
               }
             }
@@ -74,6 +105,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "Request validation failed",
+                    "details": [
+                      {
+                        "path": "currency",
+                        "message": "Invalid option: expected one of \"cNGN\"|\"cGHS\"|\"cXAF\"|\"USDx\"|\"EURx\""
+                      }
+                    ],
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -84,6 +128,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "WALLET_ALREADY_EXISTS",
+                    "message": "A wallet with this email already exists",
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -114,6 +165,37 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/WalletResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90",
+                    "email": "ada@example.com",
+                    "phone": "+2348012345678",
+                    "totalUsd": "80.000000",
+                    "balances": [
+                      {
+                        "currency": "cNGN",
+                        "amount": "53849.475520"
+                      },
+                      {
+                        "currency": "cGHS",
+                        "amount": "0.000000"
+                      },
+                      {
+                        "currency": "cXAF",
+                        "amount": "0.000000"
+                      },
+                      {
+                        "currency": "USDx",
+                        "amount": "40.000000"
+                      },
+                      {
+                        "currency": "EURx",
+                        "amount": "0.000000"
+                      }
+                    ],
+                    "createdAt": "2026-10-30T09:14:00.000Z"
+                  }
                 }
               }
             }
@@ -124,6 +206,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "WALLET_NOT_FOUND",
+                    "message": "Wallet not found",
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -154,6 +243,44 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/WalletBalancesResponse"
+                },
+                "example": {
+                  "data": {
+                    "walletId": "3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90",
+                    "totalUsd": "80.000000",
+                    "fx": {
+                      "source": "live",
+                      "provider": "open.er-api.com",
+                      "refreshedAt": "2026-10-30T09:14:52.000Z"
+                    },
+                    "balances": [
+                      {
+                        "currency": "cNGN",
+                        "amount": "53849.475520",
+                        "usdValue": "40.000000"
+                      },
+                      {
+                        "currency": "cGHS",
+                        "amount": "0.000000",
+                        "usdValue": "0.000000"
+                      },
+                      {
+                        "currency": "cXAF",
+                        "amount": "0.000000",
+                        "usdValue": "0.000000"
+                      },
+                      {
+                        "currency": "USDx",
+                        "amount": "40.000000",
+                        "usdValue": "40.000000"
+                      },
+                      {
+                        "currency": "EURx",
+                        "amount": "0.000000",
+                        "usdValue": "0.000000"
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -164,6 +291,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "WALLET_NOT_FOUND",
+                    "message": "Wallet not found",
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -238,6 +372,29 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TransactionResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "6d0f4c1a-2b3e-4f5a-8c9d-0e1f2a3b4c5d",
+                    "type": "DEPOSIT",
+                    "fromWalletId": null,
+                    "toWalletId": "3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90",
+                    "source": {
+                      "currency": "USDx",
+                      "amount": "100.000000"
+                    },
+                    "destination": {
+                      "currency": "USDx",
+                      "amount": "100.000000"
+                    },
+                    "fx": {
+                      "rate": "1",
+                      "source": "par",
+                      "provider": null,
+                      "refreshedAt": "2026-10-30T09:15:00.000Z"
+                    },
+                    "createdAt": "2026-10-30T09:15:00.000Z"
+                  }
                 }
               }
             }
@@ -248,6 +405,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "Request validation failed",
+                    "details": [
+                      {
+                        "path": "currency",
+                        "message": "Invalid option: expected one of \"cNGN\"|\"cGHS\"|\"cXAF\"|\"USDx\"|\"EURx\""
+                      }
+                    ],
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -258,6 +428,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "WALLET_NOT_FOUND",
+                    "message": "Wallet not found",
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -268,6 +445,18 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INSUFFICIENT_FUNDS",
+                    "message": "Insufficient USDx balance",
+                    "details": {
+                      "currency": "USDx",
+                      "available": "10.000000",
+                      "required": "25.000000"
+                    },
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -348,6 +537,29 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TransactionResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "7e1a5d2b-3c4f-4a6b-9d0e-1f2a3b4c5d6e",
+                    "type": "SWAP",
+                    "fromWalletId": "3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90",
+                    "toWalletId": "3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90",
+                    "source": {
+                      "currency": "USDx",
+                      "amount": "40.000000"
+                    },
+                    "destination": {
+                      "currency": "cNGN",
+                      "amount": "53849.475520"
+                    },
+                    "fx": {
+                      "rate": "1346.236888",
+                      "source": "live",
+                      "provider": "open.er-api.com",
+                      "refreshedAt": "2026-10-30T09:14:52.000Z"
+                    },
+                    "createdAt": "2026-10-30T09:16:10.000Z"
+                  }
                 }
               }
             }
@@ -358,6 +570,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "Request validation failed",
+                    "details": [
+                      {
+                        "path": "currency",
+                        "message": "Invalid option: expected one of \"cNGN\"|\"cGHS\"|\"cXAF\"|\"USDx\"|\"EURx\""
+                      }
+                    ],
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -368,6 +593,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "WALLET_NOT_FOUND",
+                    "message": "Wallet not found",
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -378,6 +610,18 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INSUFFICIENT_FUNDS",
+                    "message": "Insufficient USDx balance",
+                    "details": {
+                      "currency": "USDx",
+                      "available": "10.000000",
+                      "required": "25.000000"
+                    },
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -461,6 +705,29 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TransactionResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "8f2b6e3c-4d5a-4b7c-8e1f-2a3b4c5d6e7f",
+                    "type": "TRANSFER",
+                    "fromWalletId": "3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90",
+                    "toWalletId": "9a1e4b2c-7d3f-4e6a-8b5c-2f1d0e9c7b64",
+                    "source": {
+                      "currency": "USDx",
+                      "amount": "20.000000"
+                    },
+                    "destination": {
+                      "currency": "cGHS",
+                      "amount": "232.798320"
+                    },
+                    "fx": {
+                      "rate": "11.639916",
+                      "source": "live",
+                      "provider": "open.er-api.com",
+                      "refreshedAt": "2026-10-30T09:14:52.000Z"
+                    },
+                    "createdAt": "2026-10-30T09:17:45.000Z"
+                  }
                 }
               }
             }
@@ -471,6 +738,19 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "Request validation failed",
+                    "details": [
+                      {
+                        "path": "currency",
+                        "message": "Invalid option: expected one of \"cNGN\"|\"cGHS\"|\"cXAF\"|\"USDx\"|\"EURx\""
+                      }
+                    ],
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -481,6 +761,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "WALLET_NOT_FOUND",
+                    "message": "Wallet not found",
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -491,6 +778,18 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INSUFFICIENT_FUNDS",
+                    "message": "Insufficient USDx balance",
+                    "details": {
+                      "currency": "USDx",
+                      "available": "10.000000",
+                      "required": "25.000000"
+                    },
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -559,6 +858,59 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TransactionHistory"
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "8f2b6e3c-4d5a-4b7c-8e1f-2a3b4c5d6e7f",
+                      "type": "TRANSFER",
+                      "direction": "OUT",
+                      "fromWalletId": "3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90",
+                      "toWalletId": "9a1e4b2c-7d3f-4e6a-8b5c-2f1d0e9c7b64",
+                      "source": {
+                        "currency": "USDx",
+                        "amount": "20.000000"
+                      },
+                      "destination": {
+                        "currency": "cGHS",
+                        "amount": "232.798320"
+                      },
+                      "fx": {
+                        "rate": "11.639916",
+                        "source": "live",
+                        "provider": "open.er-api.com",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      "createdAt": "2026-10-30T09:17:45.000Z"
+                    },
+                    {
+                      "id": "6d0f4c1a-2b3e-4f5a-8c9d-0e1f2a3b4c5d",
+                      "type": "DEPOSIT",
+                      "direction": "IN",
+                      "fromWalletId": null,
+                      "toWalletId": "3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90",
+                      "source": {
+                        "currency": "USDx",
+                        "amount": "100.000000"
+                      },
+                      "destination": {
+                        "currency": "USDx",
+                        "amount": "100.000000"
+                      },
+                      "fx": {
+                        "rate": "1",
+                        "source": "par",
+                        "provider": null,
+                        "refreshedAt": "2026-10-30T09:15:00.000Z"
+                      },
+                      "createdAt": "2026-10-30T09:15:00.000Z"
+                    }
+                  ],
+                  "pagination": {
+                    "limit": 2,
+                    "hasMore": true,
+                    "nextCursor": "NmQwZjRjMWEtMmIzZS00ZjVhLThjOWQtMGUxZjJhM2I0YzVk"
+                  }
                 }
               }
             }
@@ -569,6 +921,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "INVALID_CURSOR",
+                    "message": "cursor is not valid",
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -579,6 +938,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "WALLET_NOT_FOUND",
+                    "message": "Wallet not found",
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -608,6 +974,29 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TransactionResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "8f2b6e3c-4d5a-4b7c-8e1f-2a3b4c5d6e7f",
+                    "type": "TRANSFER",
+                    "fromWalletId": "3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90",
+                    "toWalletId": "9a1e4b2c-7d3f-4e6a-8b5c-2f1d0e9c7b64",
+                    "source": {
+                      "currency": "USDx",
+                      "amount": "20.000000"
+                    },
+                    "destination": {
+                      "currency": "cGHS",
+                      "amount": "232.798320"
+                    },
+                    "fx": {
+                      "rate": "11.639916",
+                      "source": "live",
+                      "provider": "open.er-api.com",
+                      "refreshedAt": "2026-10-30T09:14:52.000Z"
+                    },
+                    "createdAt": "2026-10-30T09:17:45.000Z"
+                  }
                 }
               }
             }
@@ -618,6 +1007,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "TRANSACTION_NOT_FOUND",
+                    "message": "Transaction not found",
+                    "requestId": "5b2c7d1e-9f3a-4e8b-a6c4-1d2e3f4a5b6c"
+                  }
                 }
               }
             }
@@ -637,6 +1033,135 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RatesResponse"
+                },
+                "example": {
+                  "data": {
+                    "source": "live",
+                    "provider": "open.er-api.com",
+                    "refreshedAt": "2026-10-30T09:14:52.000Z",
+                    "rates": [
+                      {
+                        "from": "cNGN",
+                        "to": "cGHS",
+                        "rate": "0.008646261370309442",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "cNGN",
+                        "to": "cXAF",
+                        "rate": "0.437166062857133654",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "cNGN",
+                        "to": "USDx",
+                        "rate": "0.00074281132014264",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "cNGN",
+                        "to": "EURx",
+                        "rate": "0.000666461458601779",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "cGHS",
+                        "to": "cNGN",
+                        "rate": "115.656924671964986688",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "cGHS",
+                        "to": "cXAF",
+                        "rate": "50.561282401007017576",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "cGHS",
+                        "to": "USDx",
+                        "rate": "0.085911272899220234",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "cGHS",
+                        "to": "EURx",
+                        "rate": "0.077080882714273883",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "cXAF",
+                        "to": "cNGN",
+                        "rate": "2.287460269592795652",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "cXAF",
+                        "to": "cGHS",
+                        "rate": "0.019777979365097813",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "cXAF",
+                        "to": "USDx",
+                        "rate": "0.001699151382630064",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "cXAF",
+                        "to": "EURx",
+                        "rate": "0.001524504107766433",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "USDx",
+                        "to": "cNGN",
+                        "rate": "1346.236888",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "USDx",
+                        "to": "cGHS",
+                        "rate": "11.639916",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "USDx",
+                        "to": "cXAF",
+                        "rate": "588.52908",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "USDx",
+                        "to": "EURx",
+                        "rate": "0.897215",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "EURx",
+                        "to": "cNGN",
+                        "rate": "1500.461860312188271484",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "EURx",
+                        "to": "cGHS",
+                        "rate": "12.973385420439916853",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "EURx",
+                        "to": "cXAF",
+                        "rate": "655.951003939969795422",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      },
+                      {
+                        "from": "EURx",
+                        "to": "USDx",
+                        "rate": "1.114560055282178741",
+                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1009,6 +1534,11 @@
                   "type": "string",
                   "enum": ["DEPOSIT", "SWAP", "TRANSFER"]
                 },
+                "direction": {
+                  "type": "string",
+                  "enum": ["IN", "OUT", "INTERNAL"],
+                  "description": "From the point of view of the wallet being listed"
+                },
                 "fromWalletId": {
                   "anyOf": [
                     {
@@ -1097,23 +1627,18 @@
                   "format": "date-time",
                   "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
                   "example": "2026-10-30T09:15:00.000Z"
-                },
-                "direction": {
-                  "type": "string",
-                  "enum": ["IN", "OUT", "INTERNAL"],
-                  "description": "From the point of view of the wallet being listed"
                 }
               },
               "required": [
                 "id",
                 "type",
+                "direction",
                 "fromWalletId",
                 "toWalletId",
                 "source",
                 "destination",
                 "fx",
-                "createdAt",
-                "direction"
+                "createdAt"
               ],
               "additionalProperties": false
             }
@@ -1123,8 +1648,9 @@
             "properties": {
               "limit": {
                 "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
+                "minimum": 1,
+                "maximum": 100,
+                "example": 20
               },
               "hasMore": {
                 "type": "boolean"

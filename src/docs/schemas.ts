@@ -89,17 +89,22 @@ export const Transaction = z
   })
   .meta({ id: 'Transaction' });
 
+// Same fields as Transaction, with direction placed right after type, as the API sends it.
+const { id: txId, type: txType, ...txRest } = Transaction.shape;
+const HistoryItem = z.strictObject({
+  id: txId,
+  type: txType,
+  direction: z
+    .enum(['IN', 'OUT', 'INTERNAL'])
+    .meta({ description: 'From the point of view of the wallet being listed' }),
+  ...txRest,
+});
+
 export const HistoryPage = z
   .strictObject({
-    data: z.array(
-      Transaction.extend({
-        direction: z
-          .enum(['IN', 'OUT', 'INTERNAL'])
-          .meta({ description: 'From the point of view of the wallet being listed' }),
-      }),
-    ),
+    data: z.array(HistoryItem),
     pagination: z.strictObject({
-      limit: z.number().int(),
+      limit: z.number().int().min(1).max(100).meta({ example: 20 }),
       hasMore: z.boolean(),
       nextCursor: z
         .string()

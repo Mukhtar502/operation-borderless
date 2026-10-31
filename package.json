@@ -22,6 +22,7 @@
     "test:integration": "vitest run --project integration",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:postman": "npx -y newman@6 run docs/CurrencyMesh.postman_collection.json",
     "docs:openapi": "tsx src/docs/generate.ts && prettier --write docs/openapi.json",
     "db:migrate": "tsx src/db/migrate.ts",
     "db:migrate:down": "tsx src/db/migrate.ts down",

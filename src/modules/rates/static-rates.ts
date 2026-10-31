@@ -1,12 +1,12 @@
-// Last-resort rates, used only when the live provider has never answered since the
-// process started. Indicative values, units per 1 USD. XAF is derived from its fixed
-// peg to the euro (655.957 XAF = 1 EUR) so EURx <-> cXAF stays consistent.
-export const STATIC_RATES_AS_OF = new Date('2026-10-01T00:00:00Z');
+// Last-resort rates, used only when there are no usable live rates: the provider has not
+// answered since start-up, or its last answer is too old. Units per 1 USD, taken from the
+// live feed on the date below. They are clearly labelled "static" wherever they are used.
+export const STATIC_RATES_AS_OF = new Date('2026-10-29T00:02:31Z');
 
 export const STATIC_USD_RATES: Record<string, string> = {
   USD: '1',
-  EUR: '0.92',
-  NGN: '1550',
-  GHS: '15.5',
-  XAF: '603.48044',
+  EUR: '0.897215',
+  NGN: '1346.236888',
+  GHS: '11.639916',
+  XAF: '588.52908',
 };

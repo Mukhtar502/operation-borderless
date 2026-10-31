@@ -12,6 +12,7 @@ const schema = z.object({
   FX_PROVIDER_URL: z.url().default('https://open.er-api.com/v6/latest/USD'),
   FX_TIMEOUT_MS: z.coerce.number().int().positive().default(5000),
   FX_CACHE_TTL_SECONDS: z.coerce.number().int().positive().default(300),
+  FX_MAX_STALE_SECONDS: z.coerce.number().int().positive().default(172_800),
 });
 
 export type Config = z.infer<typeof schema>;

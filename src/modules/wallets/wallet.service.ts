@@ -17,7 +17,7 @@ export interface WalletBalances {
   walletId: string;
   /** Sum of the usdValue lines, in USDx at USDx precision. */
   totalUsd: string;
-  fx: { source: RateSource; provider: string; refreshedAt: Date };
+  fx: { source: RateSource; provider: string; refreshedAt: Date; providerUpdatedAt: Date };
   balances: (Balance & { usdValue: string })[];
 }
 
@@ -109,6 +109,7 @@ export class WalletService {
         source: snapshot.source,
         provider: snapshot.provider,
         refreshedAt: snapshot.refreshedAt,
+        providerUpdatedAt: snapshot.providerUpdatedAt,
       },
       balances: lines,
     };

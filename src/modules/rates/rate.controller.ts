@@ -9,7 +9,13 @@ export function rateController(fx: FxService) {
     const rates = CURRENCY_CODES.flatMap((from) =>
       CURRENCY_CODES.filter((to) => to !== from).map((to) => {
         const quote = quoteFrom(snapshot, from, to);
-        return { from, to, rate: quote.rate.toFixed(), refreshedAt: quote.refreshedAt };
+        return {
+          from,
+          to,
+          rate: quote.rate.toFixed(),
+          refreshedAt: snapshot.refreshedAt,
+          providerUpdatedAt: snapshot.providerUpdatedAt,
+        };
       }),
     );
     res.json({
@@ -17,6 +23,7 @@ export function rateController(fx: FxService) {
         source: snapshot.source,
         provider: snapshot.provider,
         refreshedAt: snapshot.refreshedAt,
+        providerUpdatedAt: snapshot.providerUpdatedAt,
         rates,
       },
     });

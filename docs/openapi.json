@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "/"
     }
   ],
   "tags": [
@@ -260,7 +260,8 @@
                     "fx": {
                       "source": "live",
                       "provider": "open.er-api.com",
-                      "refreshedAt": "2026-10-30T09:14:52.000Z"
+                      "refreshedAt": "2026-10-30T09:14:52.000Z",
+                      "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                     },
                     "balances": [
                       {
@@ -1055,7 +1056,7 @@
       "get": {
         "tags": ["FX"],
         "summary": "Current rates between all supported stablecoins",
-        "description": "All 20 pairs, each with the time it was last refreshed. If the live provider is down, the last good (stale) or built-in (static) rates are served instead.",
+        "description": "All 20 pairs. refreshedAt is when this API last fetched the rate; providerUpdatedAt is when the provider published it (its feed updates daily). If the provider is down, the last good (stale) or built-in (static) rates are served instead.",
         "responses": {
           "200": {
             "description": "Rates",
@@ -1069,126 +1070,147 @@
                     "source": "live",
                     "provider": "open.er-api.com",
                     "refreshedAt": "2026-10-30T09:14:52.000Z",
+                    "providerUpdatedAt": "2026-10-30T00:02:31.000Z",
                     "rates": [
                       {
                         "from": "cNGN",
                         "to": "cGHS",
                         "rate": "0.008646261370309442",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "cNGN",
                         "to": "cXAF",
                         "rate": "0.437166062857133654",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "cNGN",
                         "to": "USDx",
                         "rate": "0.00074281132014264",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "cNGN",
                         "to": "EURx",
                         "rate": "0.000666461458601779",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "cGHS",
                         "to": "cNGN",
                         "rate": "115.656924671964986688",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "cGHS",
                         "to": "cXAF",
                         "rate": "50.561282401007017576",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "cGHS",
                         "to": "USDx",
                         "rate": "0.085911272899220234",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "cGHS",
                         "to": "EURx",
                         "rate": "0.077080882714273883",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "cXAF",
                         "to": "cNGN",
                         "rate": "2.287460269592795652",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "cXAF",
                         "to": "cGHS",
                         "rate": "0.019777979365097813",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "cXAF",
                         "to": "USDx",
                         "rate": "0.001699151382630064",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "cXAF",
                         "to": "EURx",
                         "rate": "0.001524504107766433",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "USDx",
                         "to": "cNGN",
                         "rate": "1346.236888",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "USDx",
                         "to": "cGHS",
                         "rate": "11.639916",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "USDx",
                         "to": "cXAF",
                         "rate": "588.52908",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "USDx",
                         "to": "EURx",
                         "rate": "0.897215",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "EURx",
                         "to": "cNGN",
                         "rate": "1500.461860312188271484",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "EURx",
                         "to": "cGHS",
                         "rate": "12.973385420439916853",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "EURx",
                         "to": "cXAF",
                         "rate": "655.951003939969795422",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       },
                       {
                         "from": "EURx",
                         "to": "USDx",
                         "rate": "1.114560055282178741",
-                        "refreshedAt": "2026-10-30T09:14:52.000Z"
+                        "refreshedAt": "2026-10-30T09:14:52.000Z",
+                        "providerUpdatedAt": "2026-10-30T00:02:31.000Z"
                       }
                     ]
                   }
@@ -1331,7 +1353,7 @@
               "source": {
                 "type": "string",
                 "enum": ["live", "stale", "static"],
-                "description": "live: fresh from provider; stale: last good rates; static: built-in table"
+                "description": "live: fetched recently; stale: last good rates; static: built-in table"
               },
               "provider": {
                 "type": "string"
@@ -1340,10 +1362,18 @@
                 "type": "string",
                 "format": "date-time",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                "example": "2026-10-30T09:15:00.000Z"
+                "example": "2026-10-30T09:14:52.000Z",
+                "description": "When this API last fetched the rate successfully"
+              },
+              "providerUpdatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                "example": "2026-10-30T00:02:31.000Z",
+                "description": "When the FX provider published the rate; its feed updates daily"
               }
             },
-            "required": ["source", "provider", "refreshedAt"],
+            "required": ["source", "provider", "refreshedAt", "providerUpdatedAt"],
             "additionalProperties": false
           },
           "balances": {
@@ -1383,7 +1413,7 @@
           "source": {
             "type": "string",
             "enum": ["live", "stale", "static"],
-            "description": "live: fresh from provider; stale: last good rates; static: built-in table"
+            "description": "live: fetched recently; stale: last good rates; static: built-in table"
           },
           "provider": {
             "type": "string",
@@ -1393,7 +1423,15 @@
             "type": "string",
             "format": "date-time",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-            "example": "2026-10-30T09:15:00.000Z"
+            "example": "2026-10-30T09:14:52.000Z",
+            "description": "When this API last fetched the rate successfully"
+          },
+          "providerUpdatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "example": "2026-10-30T00:02:31.000Z",
+            "description": "When the FX provider published the rate; its feed updates daily"
           },
           "rates": {
             "type": "array",
@@ -1420,15 +1458,23 @@
                   "type": "string",
                   "format": "date-time",
                   "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                  "example": "2026-10-30T09:15:00.000Z"
+                  "example": "2026-10-30T09:14:52.000Z",
+                  "description": "When this API last fetched the rate successfully"
+                },
+                "providerUpdatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "example": "2026-10-30T00:02:31.000Z",
+                  "description": "When the FX provider published the rate; its feed updates daily"
                 }
               },
-              "required": ["from", "to", "rate", "refreshedAt"],
+              "required": ["from", "to", "rate", "refreshedAt", "providerUpdatedAt"],
               "additionalProperties": false
             }
           }
         },
-        "required": ["source", "provider", "refreshedAt", "rates"],
+        "required": ["source", "provider", "refreshedAt", "providerUpdatedAt", "rates"],
         "additionalProperties": false
       },
       "Transaction": {

@@ -15,9 +15,17 @@ const Rate = z
   .regex(/^\d+(\.\d+)?$/)
   .meta({ description: 'Units of the target currency per 1 unit of the source', example: '1500' });
 const Timestamp = z.iso.datetime().meta({ example: '2026-10-30T09:15:00.000Z' });
+const RefreshedAt = Timestamp.meta({
+  description: 'When this API last fetched the rate successfully',
+  example: '2026-10-30T09:14:52.000Z',
+});
+const ProviderUpdatedAt = Timestamp.meta({
+  description: 'When the FX provider published the rate; its feed updates daily',
+  example: '2026-10-30T00:02:31.000Z',
+});
 const Uuid = z.uuid().meta({ example: '3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90' });
 const RateSource = z.enum(['live', 'stale', 'static']).meta({
-  description: 'live: fresh from provider; stale: last good rates; static: built-in table',
+  description: 'live: fetched recently; stale: last good rates; static: built-in table',
 });
 
 export const ErrorResponse = z
@@ -53,7 +61,12 @@ export const WalletBalances = z
   .strictObject({
     walletId: Uuid,
     totalUsd: Amount.meta({ description: 'Sum of the usdValue lines', example: '3.900889' }),
-    fx: z.strictObject({ source: RateSource, provider: z.string(), refreshedAt: Timestamp }),
+    fx: z.strictObject({
+      source: RateSource,
+      provider: z.string(),
+      refreshedAt: RefreshedAt,
+      providerUpdatedAt: ProviderUpdatedAt,
+    }),
     balances: z.array(Balance.extend({ usdValue: Amount })),
   })
   .meta({ id: 'WalletBalances' });
@@ -62,9 +75,16 @@ export const Rates = z
   .strictObject({
     source: RateSource,
     provider: z.string().meta({ example: 'open.er-api.com' }),
-    refreshedAt: Timestamp,
+    refreshedAt: RefreshedAt,
+    providerUpdatedAt: ProviderUpdatedAt,
     rates: z.array(
-      z.strictObject({ from: Currency, to: Currency, rate: Rate, refreshedAt: Timestamp }),
+      z.strictObject({
+        from: Currency,
+        to: Currency,
+        rate: Rate,
+        refreshedAt: RefreshedAt,
+        providerUpdatedAt: ProviderUpdatedAt,
+      }),
     ),
   })
   .meta({ id: 'Rates' });

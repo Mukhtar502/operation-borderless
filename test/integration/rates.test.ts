@@ -13,6 +13,7 @@ interface RatesBody {
     source: string;
     provider: string;
     refreshedAt: string;
+    providerUpdatedAt: string;
     rates: { from: string; to: string; rate: string; refreshedAt: string }[];
   };
 }
@@ -53,6 +54,7 @@ describe('GET /v1/rates', () => {
     expect(data.source).toBe('static');
     expect(data.provider).toBe('static-table');
     expect(data.refreshedAt).toBe(STATIC_RATES_AS_OF.toISOString());
+    expect(data.providerUpdatedAt).toBe(STATIC_RATES_AS_OF.toISOString());
     expect(data.rates).toHaveLength(20);
   });
 });

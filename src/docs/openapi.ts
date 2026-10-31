@@ -111,7 +111,7 @@ export function buildOpenApiDocument() {
         'Amounts are decimal strings, e.g. "100.50". Requests that move money need an ' +
         '`Idempotency-Key` header.',
     },
-    servers: [{ url: 'http://localhost:3000' }],
+    servers: [{ url: '/' }],
     tags: [
       { name: 'Wallets' },
       { name: 'Payments', description: 'Deposits, swaps and transfers' },
@@ -278,7 +278,8 @@ export function buildOpenApiDocument() {
           tags: ['FX'],
           summary: 'Current rates between all supported stablecoins',
           description:
-            'All 20 pairs, each with the time it was last refreshed. If the live provider ' +
+            'All 20 pairs. refreshedAt is when this API last fetched the rate; providerUpdatedAt ' +
+            'is when the provider published it (its feed updates daily). If the provider ' +
             'is down, the last good (stale) or built-in (static) rates are served instead.',
           responses: {
             200: { description: 'Rates', content: json('RatesResponse', EXAMPLES.RatesResponse) },

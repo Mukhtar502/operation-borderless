@@ -103,6 +103,34 @@ describe('FxService', () => {
     expect(stale.usdRates.cNGN.toFixed()).toBe('1500');
   });
 
+  it('reports when the provider published the rates, apart from when we fetched them', async () => {
+    const { fx } = setup(vi.fn<typeof fetch>().mockResolvedValue(providerResponse()));
+    const snapshot = await fx.getSnapshot();
+    expect(snapshot.providerUpdatedAt).toEqual(new Date(1_790_000_000 * 1000));
+    expect(snapshot.refreshedAt).toEqual(new Date(1_000_000));
+  });
+
+  it('stops reusing old rates after the maximum age and uses the static table', async () => {
+    let now = 1_000_000;
+    const fetchFn = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(providerResponse())
+      .mockRejectedValue(new Error('down'));
+    const provider = new OpenErApiProvider('https://fx.test/latest/USD', 50, fetchFn);
+    const fx = new FxService(provider, logger, {
+      cacheTtlMs: 60_000,
+      retryBackoffMs: 10_000,
+      maxStaleMs: 3_600_000,
+      now: () => now,
+    });
+
+    await fx.getSnapshot();
+    now += 3_600_000;
+    expect((await fx.getSnapshot()).source).toBe('stale');
+    now += 1;
+    expect((await fx.getSnapshot()).source).toBe('static');
+  });
+
   it('waits before retrying a failed provider', async () => {
     const fetchFn = vi.fn<typeof fetch>().mockRejectedValue(new Error('down'));
     const { fx, advance } = setup(fetchFn);

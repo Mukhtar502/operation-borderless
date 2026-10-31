@@ -13,6 +13,7 @@ const fx = new FxService(
   logger,
   {
     cacheTtlMs: config.FX_CACHE_TTL_SECONDS * 1000,
+    maxStaleMs: config.FX_MAX_STALE_SECONDS * 1000,
   },
 );
 const app = createApp({ db, logger, fx });

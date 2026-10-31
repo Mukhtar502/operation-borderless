@@ -122,7 +122,7 @@ describe('POST /v1/wallets/:walletId/swaps', () => {
       .expect(201);
     const { data } = res.body as TransactionBody;
     expect(data.fx).toMatchObject({ source: 'static', provider: 'static-table' });
-    expect(data.destination.amount).toBe('9.200000'); // static EUR rate is 0.92
+    expect(data.destination.amount).toBe('8.972150'); // static EUR rate is 0.897215
   });
 
   it('returns 404 for an unknown wallet', async () => {

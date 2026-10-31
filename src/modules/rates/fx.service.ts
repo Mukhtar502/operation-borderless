@@ -7,8 +7,8 @@ import { STATIC_RATES_AS_OF, STATIC_USD_RATES } from './static-rates.js';
 
 /**
  * live:   fetched from the provider within the cache TTL
- * stale:  provider is failing; last good live rates are reused
- * static: provider has not answered since start-up; built-in table is used
+ * stale:  provider is failing; the last good rates are reused, up to a maximum age
+ * static: no usable live rates (never fetched, or too old); built-in table is used
  */
 export type RateSource = 'live' | 'stale' | 'static';
 
@@ -17,8 +17,10 @@ export interface RateSnapshot {
   provider: string;
   /** Units of each stablecoin per 1 USDx. */
   usdRates: Record<CurrencyCode, Money>;
-  /** When these rates were last successfully refreshed. */
+  /** When we last fetched these rates successfully. */
   refreshedAt: Date;
+  /** When the provider itself published them. Its feed updates daily, so this can be older. */
+  providerUpdatedAt: Date;
 }
 
 export interface FxQuote {
@@ -35,6 +37,8 @@ export interface FxServiceOptions {
   cacheTtlMs: number;
   /** After a failed refresh, wait this long before calling the provider again. */
   retryBackoffMs?: number;
+  /** How long the last good rates may stand in for a failing provider. */
+  maxStaleMs?: number;
   now?: () => number;
 }
 
@@ -47,6 +51,7 @@ export class FxService {
   private nextAttemptAtMs = 0;
   private readonly cacheTtlMs: number;
   private readonly retryBackoffMs: number;
+  private readonly maxStaleMs: number;
   private readonly now: () => number;
 
   constructor(
@@ -56,6 +61,7 @@ export class FxService {
   ) {
     this.cacheTtlMs = options.cacheTtlMs;
     this.retryBackoffMs = options.retryBackoffMs ?? 30_000;
+    this.maxStaleMs = options.maxStaleMs ?? 48 * 60 * 60 * 1000;
     this.now = options.now ?? Date.now;
   }
 
@@ -68,7 +74,9 @@ export class FxService {
       const fresh = await this.refresh();
       if (fresh) return fresh;
     }
-    if (this.live) return { ...this.live.snapshot, source: 'stale' };
+    if (this.live && this.now() - this.live.fetchedAtMs <= this.maxStaleMs) {
+      return { ...this.live.snapshot, source: 'stale' };
+    }
     return staticSnapshot();
   }
 
@@ -97,12 +105,13 @@ export class FxService {
 
   private async fetchLive(): Promise<RateSnapshot | undefined> {
     try {
-      const { rates } = await this.provider.fetchUsdRates();
+      const { rates, updatedAt } = await this.provider.fetchUsdRates();
       const snapshot: RateSnapshot = {
         source: 'live',
         provider: this.provider.name,
         usdRates: toCurrencyRates(rates),
         refreshedAt: new Date(this.now()),
+        providerUpdatedAt: updatedAt,
       };
       this.live = { snapshot, fetchedAtMs: this.now() };
       return snapshot;
@@ -140,6 +149,7 @@ function staticSnapshot(): RateSnapshot {
     provider: 'static-table',
     usdRates: toCurrencyRates(STATIC_USD_RATES),
     refreshedAt: STATIC_RATES_AS_OF,
+    providerUpdatedAt: STATIC_RATES_AS_OF,
   };
 }
 

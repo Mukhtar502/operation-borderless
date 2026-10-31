@@ -9,6 +9,7 @@ import { quoteFrom, type RateSnapshot } from '../modules/rates/fx.service.js';
 const ADA = '3f6c2a7e-8b1d-4c5e-9a2f-1b7d6e4c8a90';
 const KOFI = '9a1e4b2c-7d3f-4e6a-8b5c-2f1d0e9c7b64';
 const REFRESHED_AT = '2026-10-30T09:14:52.000Z';
+const PROVIDER_UPDATED_AT = '2026-10-30T00:02:31.000Z';
 
 // Units per 1 USD, roughly in line with late-2026 reference rates.
 const SAMPLE_RATES: Record<CurrencyCode, string> = {
@@ -22,6 +23,7 @@ const sampleSnapshot: RateSnapshot = {
   source: 'live',
   provider: 'open.er-api.com',
   refreshedAt: new Date(REFRESHED_AT),
+  providerUpdatedAt: new Date(PROVIDER_UPDATED_AT),
   usdRates: Object.fromEntries(
     CURRENCY_CODES.map((code) => [code, new Money(SAMPLE_RATES[code])]),
   ) as Record<CurrencyCode, Money>,
@@ -94,7 +96,12 @@ export const EXAMPLES = {
     data: {
       walletId: ADA,
       totalUsd: '80.000000',
-      fx: { source: 'live', provider: 'open.er-api.com', refreshedAt: REFRESHED_AT },
+      fx: {
+        source: 'live',
+        provider: 'open.er-api.com',
+        refreshedAt: REFRESHED_AT,
+        providerUpdatedAt: PROVIDER_UPDATED_AT,
+      },
       balances,
     },
   },
@@ -103,12 +110,14 @@ export const EXAMPLES = {
       source: 'live',
       provider: 'open.er-api.com',
       refreshedAt: REFRESHED_AT,
+      providerUpdatedAt: PROVIDER_UPDATED_AT,
       rates: CURRENCY_CODES.flatMap((from) =>
         CURRENCY_CODES.filter((to) => to !== from).map((to) => ({
           from,
           to,
           rate: quoteFrom(sampleSnapshot, from, to).rate.toFixed(),
           refreshedAt: REFRESHED_AT,
+          providerUpdatedAt: PROVIDER_UPDATED_AT,
         })),
       ),
     },

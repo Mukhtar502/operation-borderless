@@ -9,8 +9,8 @@ declare module 'vitest' {
   }
 }
 
-// Starts a disposable Postgres (or uses TEST_DATABASE_URL if supplied, e.g. a CI
-// service container), applies migrations once, and hands the URL to every test file.
+// Starts a disposable Postgres (or uses TEST_DATABASE_URL if supplied), applies
+// migrations once, and hands the URL to every test file.
 export default async function setup(project: TestProject): Promise<() => Promise<void>> {
   let container: StartedPostgreSqlContainer | undefined;
   let databaseUrl = process.env.TEST_DATABASE_URL;

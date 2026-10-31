@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { z } from 'zod';
 
-// Load .env for host runs; Docker and CI inject real environment variables instead.
+// Load .env for host runs; Docker injects real environment variables instead.
 if (existsSync('.env')) process.loadEnvFile('.env');
 
 const schema = z

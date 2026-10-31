@@ -12,15 +12,13 @@ export const testLogger = createLogger('silent');
 export interface TestContext {
   db: DB;
   app: Express;
-  fxProvider: FakeFxProvider;
 }
 
 // Wires a real app to the test database and wipes user data before every test.
 // System accounts (EXTERNAL, FX_POOL) are kept but zeroed so ledger checks start clean.
 export function setupTestContext(): TestContext {
   const db = createDb(inject('databaseUrl'));
-  const fxProvider = new FakeFxProvider();
-  const fx = new FxService(fxProvider, testLogger, { cacheTtlMs: 60_000 });
+  const fx = new FxService(new FakeFxProvider(), testLogger, { cacheTtlMs: 60_000 });
   const app = createApp({ db, logger: testLogger, fx });
 
   beforeEach(async () => {
@@ -30,7 +28,7 @@ export function setupTestContext(): TestContext {
     await db.destroy();
   });
 
-  return { db, app, fxProvider };
+  return { db, app };
 }
 
 export async function resetDatabase(db: DB): Promise<void> {

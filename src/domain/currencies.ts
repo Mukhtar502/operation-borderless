@@ -27,7 +27,3 @@ export const CURRENCIES: Record<CurrencyCode, CurrencyInfo> = {
 };
 
 export const CURRENCY_CODES = Object.keys(CURRENCIES) as [CurrencyCode, ...CurrencyCode[]];
-
-export function isCurrencyCode(value: string): value is CurrencyCode {
-  return Object.hasOwn(CURRENCIES, value);
-}

@@ -7,7 +7,7 @@ import { FxService } from './modules/rates/fx.service.js';
 
 const config = loadConfig();
 const logger = createLogger(config.LOG_LEVEL);
-const db = createDb(config.DATABASE_URL);
+const db = createDb(config.DATABASE_URL, config.DB_POOL_MAX);
 const fx = new FxService(
   new OpenErApiProvider(config.FX_PROVIDER_URL, config.FX_TIMEOUT_MS),
   logger,
@@ -16,7 +16,7 @@ const fx = new FxService(
     maxStaleMs: config.FX_MAX_STALE_SECONDS * 1000,
   },
 );
-const app = createApp({ db, logger, fx });
+const app = createApp({ db, logger, fx, docsEnabled: config.docsEnabled });
 
 const server = app.listen(config.PORT, () => {
   logger.info({ port: config.PORT, env: config.NODE_ENV }, 'CurrencyMesh API listening');

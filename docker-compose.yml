@@ -41,6 +41,8 @@ services:
     environment:
       <<: *api-env
       PORT: 3000
+      # This stack is a sandbox for reviewers, so keep Swagger UI on.
+      ENABLE_DOCS: 'true'
     ports:
       - '${API_HOST_PORT:-3000}:3000'
     depends_on:

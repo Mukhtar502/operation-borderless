@@ -37,6 +37,22 @@ export interface IdempotentResponse<T> {
 export class IdempotencyService {
   constructor(private readonly db: DB) {}
 
+  /**
+   * Returns the saved response for a finished request, if there is one. Services call
+   * this before any preparation such as fetching an FX rate: a retry must get its
+   * original result, whatever the rate or the provider are doing now. run() still makes
+   * the final decision, for requests that are in flight at the same moment.
+   */
+  async findReplay<T>(request: IdempotentRequest): Promise<IdempotentResponse<T> | undefined> {
+    const existing = await this.db
+      .selectFrom('idempotency_keys')
+      .select(['request_hash', 'response_status', 'response_body'])
+      .where('scope', '=', request.scope)
+      .where('key', '=', request.key)
+      .executeTakeFirst();
+    return existing && toReplay<T>(existing, hashFingerprint(request.fingerprint));
+  }
+
   async run<T>(
     request: IdempotentRequest,
     handler: (trx: Trx) => Promise<HandlerResult<T>>,
@@ -65,17 +81,7 @@ export class IdempotencyService {
           .where('scope', '=', scope)
           .where('key', '=', key)
           .executeTakeFirstOrThrow();
-        if (existing.request_hash !== requestHash) {
-          throw unprocessable(
-            'IDEMPOTENCY_KEY_REUSED',
-            'This Idempotency-Key was already used for a different request',
-          );
-        }
-        return {
-          status: existing.response_status,
-          body: existing.response_body as T,
-          replayed: true,
-        };
+        return toReplay<T>(existing, requestHash);
       }
 
       const result = await handler(trx);
@@ -96,6 +102,23 @@ export class IdempotencyService {
       return { status: result.status, body: saved.response_body as T, replayed: false };
     });
   }
+}
+
+function toReplay<T>(
+  existing: { request_hash: string; response_status: number; response_body: unknown },
+  requestHash: string,
+): IdempotentResponse<T> {
+  if (existing.request_hash !== requestHash) {
+    throw unprocessable(
+      'IDEMPOTENCY_KEY_REUSED',
+      'This Idempotency-Key was already used for a different request',
+    );
+  }
+  return {
+    status: existing.response_status,
+    body: existing.response_body as T,
+    replayed: true,
+  };
 }
 
 /** SHA-256 of the fingerprint as JSON with sorted keys, so key order never matters. */

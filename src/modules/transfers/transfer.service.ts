@@ -47,51 +47,52 @@ export class TransferService {
     const sent = parseAmount(input.amount, sourceCurrency);
     const sourceAmount = formatAmount(sent, sourceCurrency);
 
-    // Fixed before the database transaction, as for swaps (see SwapService).
+    // Same order as swaps: replay first, then fix the rate, then open the transaction.
+    const request = {
+      scope: `wallet:${fromWalletId}`,
+      key: idempotencyKey,
+      fingerprint: {
+        op: 'TRANSFER',
+        fromWalletId,
+        toWalletId,
+        sourceCurrency,
+        destinationCurrency,
+        amount: sourceAmount,
+      },
+    };
+    const earlier = await this.idempotency.findReplay<CreatedTransaction['body']>(request);
+    if (earlier) return earlier;
+
     const quote = await this.fx.quote(sourceCurrency, destinationCurrency);
     const received = convertOrReject(sent, quote.rate, sourceCurrency, destinationCurrency);
 
-    return this.idempotency.run(
-      {
-        scope: `wallet:${fromWalletId}`,
-        key: idempotencyKey,
-        fingerprint: {
-          op: 'TRANSFER',
+    return this.idempotency.run(request, async (trx) => {
+      await assertWalletsExist(trx, fromWalletId, toWalletId);
+      const { transaction } = await this.ledger.post(trx, {
+        transaction: {
+          type: 'TRANSFER',
+          from_wallet_id: fromWalletId,
+          to_wallet_id: toWalletId,
+          source_currency: sourceCurrency,
+          source_amount: sourceAmount,
+          destination_currency: destinationCurrency,
+          destination_amount: formatAmount(received, destinationCurrency),
+          fx_rate: quote.rate.toFixed(),
+          fx_rate_source: rateSourceOf(quote),
+          fx_rate_fetched_at: quote.refreshedAt,
+          idempotency_key: idempotencyKey,
+        },
+        postings: movePostings({
           fromWalletId,
           toWalletId,
-          sourceCurrency,
-          destinationCurrency,
-          amount: sourceAmount,
-        },
-      },
-      async (trx) => {
-        await assertWalletsExist(trx, fromWalletId, toWalletId);
-        const { transaction } = await this.ledger.post(trx, {
-          transaction: {
-            type: 'TRANSFER',
-            from_wallet_id: fromWalletId,
-            to_wallet_id: toWalletId,
-            source_currency: sourceCurrency,
-            source_amount: sourceAmount,
-            destination_currency: destinationCurrency,
-            destination_amount: formatAmount(received, destinationCurrency),
-            fx_rate: quote.rate.toFixed(),
-            fx_rate_source: rateSourceOf(quote),
-            fx_rate_fetched_at: quote.refreshedAt,
-            idempotency_key: idempotencyKey,
-          },
-          postings: movePostings({
-            fromWalletId,
-            toWalletId,
-            from: sourceCurrency,
-            to: destinationCurrency,
-            sent,
-            received,
-          }),
-        });
-        return created(transaction);
-      },
-    );
+          from: sourceCurrency,
+          to: destinationCurrency,
+          sent,
+          received,
+        }),
+      });
+      return created(transaction);
+    });
   }
 }
 

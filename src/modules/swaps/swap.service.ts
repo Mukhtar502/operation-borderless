@@ -40,44 +40,46 @@ export class SwapService {
     const sent = parseAmount(input.amount, fromCurrency);
     const sourceAmount = formatAmount(sent, fromCurrency);
 
-    // The rate is fixed before the database transaction starts and is recorded with
-    // it. The fingerprint leaves the rate out, so a retry after the rate moves still
-    // replays the original result instead of becoming a new request.
+    // The fingerprint leaves the rate out, so a retry after the rate moves is still the
+    // same request. It replays its first result before any rate is even looked up.
+    const request = {
+      scope: `wallet:${walletId}`,
+      key: idempotencyKey,
+      fingerprint: { op: 'SWAP', walletId, fromCurrency, toCurrency, amount: sourceAmount },
+    };
+    const earlier = await this.idempotency.findReplay<CreatedTransaction['body']>(request);
+    if (earlier) return earlier;
+
+    // The rate is fixed before the database transaction starts, so no locks are held
+    // during a network call, and it is recorded with the transaction.
     const quote = await this.fx.quote(fromCurrency, toCurrency);
     const received = convertOrReject(sent, quote.rate, fromCurrency, toCurrency);
 
-    return this.idempotency.run(
-      {
-        scope: `wallet:${walletId}`,
-        key: idempotencyKey,
-        fingerprint: { op: 'SWAP', walletId, fromCurrency, toCurrency, amount: sourceAmount },
-      },
-      async (trx) => {
-        const { transaction } = await this.ledger.post(trx, {
-          transaction: {
-            type: 'SWAP',
-            from_wallet_id: walletId,
-            to_wallet_id: walletId,
-            source_currency: fromCurrency,
-            source_amount: sourceAmount,
-            destination_currency: toCurrency,
-            destination_amount: formatAmount(received, toCurrency),
-            fx_rate: quote.rate.toFixed(),
-            fx_rate_source: rateSourceOf(quote),
-            fx_rate_fetched_at: quote.refreshedAt,
-            idempotency_key: idempotencyKey,
-          },
-          postings: movePostings({
-            fromWalletId: walletId,
-            toWalletId: walletId,
-            from: fromCurrency,
-            to: toCurrency,
-            sent,
-            received,
-          }),
-        });
-        return created(transaction);
-      },
-    );
+    return this.idempotency.run(request, async (trx) => {
+      const { transaction } = await this.ledger.post(trx, {
+        transaction: {
+          type: 'SWAP',
+          from_wallet_id: walletId,
+          to_wallet_id: walletId,
+          source_currency: fromCurrency,
+          source_amount: sourceAmount,
+          destination_currency: toCurrency,
+          destination_amount: formatAmount(received, toCurrency),
+          fx_rate: quote.rate.toFixed(),
+          fx_rate_source: rateSourceOf(quote),
+          fx_rate_fetched_at: quote.refreshedAt,
+          idempotency_key: idempotencyKey,
+        },
+        postings: movePostings({
+          fromWalletId: walletId,
+          toWalletId: walletId,
+          from: fromCurrency,
+          to: toCurrency,
+          sent,
+          received,
+        }),
+      });
+      return created(transaction);
+    });
   }
 }

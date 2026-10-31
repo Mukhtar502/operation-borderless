@@ -73,6 +73,17 @@ export class FxService {
   }
 
   async quote(from: CurrencyCode, to: CurrencyCode): Promise<FxQuote> {
+    // No conversion means no rate is needed, so never wait on the provider for one.
+    if (from === to) {
+      return {
+        from,
+        to,
+        rate: new Money(1),
+        source: 'live',
+        provider: 'none',
+        refreshedAt: new Date(this.now()),
+      };
+    }
     return quoteFrom(await this.getSnapshot(), from, to);
   }
 

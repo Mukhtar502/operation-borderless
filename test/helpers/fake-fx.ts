@@ -7,9 +7,11 @@ export const TEST_USD_RATES = { USD: '1', EUR: '0.8', NGN: '1500', GHS: '15', XA
 export class FakeFxProvider implements FxProvider {
   readonly name = 'fake-fx';
   failing = false;
+  calls = 0;
   rates: Record<string, string> = { ...TEST_USD_RATES };
 
   fetchUsdRates(): Promise<ProviderRates> {
+    this.calls += 1;
     if (this.failing) return Promise.reject(new Error('fake provider is down'));
     return Promise.resolve({ rates: { ...this.rates }, updatedAt: new Date() });
   }

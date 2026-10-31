@@ -24,7 +24,8 @@
     "test:coverage": "vitest run --coverage",
     "docs:openapi": "tsx src/docs/generate.ts && prettier --write docs/openapi.json",
     "db:migrate": "tsx src/db/migrate.ts",
-    "db:migrate:down": "tsx src/db/migrate.ts down"
+    "db:migrate:down": "tsx src/db/migrate.ts down",
+    "db:seed": "tsx src/db/seed.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

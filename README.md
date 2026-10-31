@@ -498,6 +498,28 @@ erDiagram
     }
 ```
 
+**Reading the diagram:** `PK` is a primary key, `FK` a link to another table and `UK` a value that must be
+unique. `numeric 38,6` means up to 38 digits, 6 of them after the decimal point.
+
+| Table              | What it holds                                                                        |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| `wallets`          | Who owns the money, identified by email, phone or both                               |
+| `currencies`       | The five supported stablecoins                                                       |
+| `accounts`         | The current balance: one row per wallet per currency, plus the system accounts       |
+| `transactions`     | The business record: who sent what to whom, both amounts, the rate and its source    |
+| `ledger_entries`   | The money movements behind each transaction, and the balance after each one          |
+| `idempotency_keys` | Each `Idempotency-Key` used, with its saved response so a retry gets the same result |
+
+**How a payment flows through them,** using a cross-currency transfer:
+
+1. `idempotency_keys`: the key is claimed. If it already exists, the saved response is returned and nothing
+   else happens.
+2. `accounts`: the affected accounts are locked and the sender's funds are checked.
+3. `transactions`: one row records the transfer.
+4. `ledger_entries`: four rows record the money moving, as shown in the next section.
+5. `accounts`: the new balances are saved.
+6. `idempotency_keys`: the response is saved, then all of this commits together.
+
 The tables and their rules are created by the migrations in `src/db/migrations/`. `src/db/schema.ts`
 describes the same tables as TypeScript types, so every query is type-checked.
 
